@@ -26,7 +26,7 @@ public class User extends BaseModel implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "userId", nullable = false, unique = true)
-	private String userId;
+	private long userId;
 	@Column(name = "userName", length = 500)
 	private String name;
 	@Column(name = "Email", length = 500)
