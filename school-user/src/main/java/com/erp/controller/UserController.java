@@ -46,7 +46,7 @@ public class UserController {
 
 	@PostMapping(value = "/create", headers = "Accept=application/json")
 	public ResponseEntity<RestResponse<User>> createUser(@RequestBody User user, UriComponentsBuilder ucBuilder) {
-		log.info("Creating User {}", user.getName());
+		log.info("Creating User {}", user.getUserName());
 		RestStatus<?> status = new RestStatus<>(HttpStatus.OK.toString(), "User created successfully");
 		userService.createUser(user);
 		HttpHeaders headers = new HttpHeaders();

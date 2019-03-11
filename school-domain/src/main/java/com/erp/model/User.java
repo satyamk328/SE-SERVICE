@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -19,7 +20,8 @@ import lombok.Setter;
 @Setter
 @Getter
 @Entity
-@Table(name = "user_master")
+@Table(name = "user_master", uniqueConstraints = { @UniqueConstraint(columnNames = { "userName" }),
+		@UniqueConstraint(columnNames = { "email" }) })
 public class User extends BaseModel implements Serializable {
 
 	private static final long serialVersionUID = 8773592091012906066L;
@@ -27,8 +29,12 @@ public class User extends BaseModel implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "userId", nullable = false, unique = true)
 	private long userId;
-	@Column(name = "userName", length = 500)
-	private String name;
+	@Column(name = "userName", length = 500, updatable = false)
+	private String userName;
+	@Column(name = "firstName", length = 500)
+	private String firstName;
+	@Column(name = "lastName", length = 500)
+	private String lastName;
 	@Column(name = "Email", length = 500)
 	private String email;
 	@Column(name = "Address", length = 500)
