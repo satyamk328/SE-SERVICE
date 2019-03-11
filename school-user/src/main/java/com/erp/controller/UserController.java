@@ -20,68 +20,79 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.erp.model.User;
 import com.erp.service.UserService;
+import com.erp.spring.model.RestResponse;
+import com.erp.spring.model.RestStatus;
+
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping(value = { "/api/v0/user" })
+@Slf4j
 public class UserController {
 
 	@Autowired
-	UserService userService;
+	private UserService userService;
 
 	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<User> getUserById(@PathVariable("id") long id) {
-		System.out.println("Fetching User with id " + id);
+	public ResponseEntity<RestResponse<User>> getUserById(@PathVariable("id") long id) {
+		log.info("Fetching User with id {}", id);
+		RestStatus status = new RestStatus<>(HttpStatus.OK.toString(), "User Record successfully");
 		User user = userService.findById(id);
 		if (user == null) {
-			return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(new RestResponse(user, status), HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<User>(user, HttpStatus.OK);
+		return new ResponseEntity<>(new RestResponse(user, status), HttpStatus.OK);
 	}
 
 	@PostMapping(value = "/create", headers = "Accept=application/json")
-	public ResponseEntity<Void> createUser(@RequestBody User user, UriComponentsBuilder ucBuilder) {
-		System.out.println("Creating User " + user.getName());
+	public ResponseEntity<RestResponse<User>> createUser(@RequestBody User user, UriComponentsBuilder ucBuilder) {
+		log.info("Creating User {}", user.getName());
+		RestStatus<?> status = new RestStatus<>(HttpStatus.OK.toString(), "User created successfully");
 		userService.createUser(user);
 		HttpHeaders headers = new HttpHeaders();
 		headers.setLocation(ucBuilder.path("/user/{id}").buildAndExpand(user.getUserId()).toUri());
-		return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
+		return new ResponseEntity<RestResponse<User>>(new RestResponse(user, status), headers, HttpStatus.CREATED);
 	}
 
-	@GetMapping(value = "/get", headers = "Accept=application/json")
-	public List<User> getAllUser() {
+	@GetMapping(value = "/get")
+	public ResponseEntity<RestResponse<List<User>>> getAllUser() {
+		RestStatus<?> status = new RestStatus<>(HttpStatus.OK.toString(), "Records fetch successfully");
 		List<User> tasks = userService.getUser();
-		return tasks;
+		return  new ResponseEntity<RestResponse<List<User>>>(new RestResponse(tasks, status), HttpStatus.OK);
 
 	}
 
 	@PutMapping(value = "/update", headers = "Accept=application/json")
-	public ResponseEntity<String> updateUser(@RequestBody User currentUser) {
-		System.out.println("sd");
+	public ResponseEntity<RestResponse<User>> updateUser(@RequestBody User currentUser) {
+		RestStatus<?> status = new RestStatus<>(HttpStatus.OK.toString(), "Records fetch successfully");
 		User user = userService.findById(currentUser.getUserId());
 		if (user == null) {
-			return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+			new ResponseEntity<RestResponse<User>>(new RestResponse(user, status), HttpStatus.NOT_FOUND);
 		}
 		userService.update(currentUser, currentUser.getUserId());
-		return new ResponseEntity<String>(HttpStatus.OK);
+		return new ResponseEntity<RestResponse<User>>(new RestResponse(user, status), HttpStatus.OK);
 	}
 
 	@DeleteMapping(value = "/{id}", headers = "Accept=application/json")
-	public ResponseEntity<User> deleteUser(@PathVariable("id") long id) {
+	public ResponseEntity<RestResponse<User>> deleteUser(@PathVariable("id") long id) {
+		RestStatus<?> status = new RestStatus<>(HttpStatus.OK.toString(), "Records delete successfully");
 		User user = userService.findById(id);
 		if (user == null) {
-			return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<RestResponse<User>>(new RestResponse(user, status), HttpStatus.NOT_FOUND);
 		}
 		userService.deleteUserById(id);
-		return new ResponseEntity<User>(HttpStatus.NO_CONTENT);
+		return new ResponseEntity<RestResponse<User>>(new RestResponse(user, status), HttpStatus.NO_CONTENT);
 	}
 
 	@PatchMapping(value = "/{id}", headers = "Accept=application/json")
-	public ResponseEntity<User> updateUserPartially(@PathVariable("id") long id, @RequestBody User currentUser) {
+	public ResponseEntity<RestResponse<User>> updateUserPartially(@PathVariable("id") long id, 
+			@RequestBody User currentUser) {
+		RestStatus<?> status = new RestStatus<>(HttpStatus.OK.toString(), "Records update successfully");
 		User user = userService.findById(id);
 		if (user == null) {
-			return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<RestResponse<User>>(new RestResponse(user, status), HttpStatus.NOT_FOUND);
 		}
 		User usr = userService.updatePartially(currentUser, id);
-		return new ResponseEntity<User>(usr, HttpStatus.OK);
+		return new ResponseEntity<RestResponse<User>>(new RestResponse(user, status), HttpStatus.NOT_FOUND);
 	}
 }
