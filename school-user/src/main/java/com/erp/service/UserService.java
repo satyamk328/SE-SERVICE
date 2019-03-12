@@ -2,7 +2,7 @@ package com.erp.service;
 
 import java.util.List;
 
-import com.erp.model.User;
+import com.erp.user.model.User;
 
 public interface UserService {
 	public void createUser(User user);

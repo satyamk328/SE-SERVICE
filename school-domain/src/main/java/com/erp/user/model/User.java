@@ -1,4 +1,4 @@
-package com.erp.model;
+package com.erp.user.model;
 
 import java.io.Serializable;
 
@@ -20,20 +20,20 @@ import lombok.Setter;
 @Setter
 @Getter
 @Entity
-@Table(name = "user_master", uniqueConstraints = { @UniqueConstraint(columnNames = { "userName" }),
-		@UniqueConstraint(columnNames = { "email" }) })
+@Table(name = "user_master", uniqueConstraints = { @UniqueConstraint(columnNames = { "UserName" }),
+		@UniqueConstraint(columnNames = { "Email" }) })
 public class User extends BaseModel implements Serializable {
 
 	private static final long serialVersionUID = 8773592091012906066L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "userId", nullable = false, unique = true)
+	@Column(name = "UserId", nullable = false, unique = true)
 	private long userId;
-	@Column(name = "userName", length = 500, updatable = false)
+	@Column(name = "UserName", length = 500, updatable = false)
 	private String userName;
-	@Column(name = "firstName", length = 500)
+	@Column(name = "FirstName", length = 500)
 	private String firstName;
-	@Column(name = "lastName", length = 500)
+	@Column(name = "LastName", length = 500)
 	private String lastName;
 	@Column(name = "Email", length = 500)
 	private String email;
@@ -43,11 +43,11 @@ public class User extends BaseModel implements Serializable {
 	private String phoneNumber;
 	@Column(name = "PanNumber", length = 500)
 	private String panNumber;
-	@Column(name = "password", length = 500)
+	@Column(name = "Password", length = 500)
 	private String password;
-	@Column(name = "city", length = 500)
+	@Column(name = "City", length = 500)
 	private String city;
-	@Column(name = "state", length = 500)
+	@Column(name = "State", length = 500)
 	private String state;
 	@Column(name = "Country", length = 500)
 	private String country;
@@ -57,7 +57,7 @@ public class User extends BaseModel implements Serializable {
 	private Integer attempt;
 	@Column(name = "IsActive")
 	private boolean isActive = false;
-	@Column(name = "otp", length = 500)
+	@Column(name = "OTP", length = 500)
 	private String otp;
 
 }
