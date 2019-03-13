@@ -6,6 +6,8 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
+import com.ero.security.SecurityConfig;
+
 /**
  * @author Satyam Kumar
  *
@@ -15,7 +17,7 @@ public class WebInitializer extends AbstractAnnotationConfigDispatcherServletIni
 	@Override
 	protected Class<?>[] getRootConfigClasses() {
 		return new Class[] { WebConfig.class, EhCacheConfig.class, MailConfig.class, SwaggerConfig.class,
-				WebSecurityConfig.class };
+				SecurityConfig.class };
 	}
 
 	@Override

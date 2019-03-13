@@ -14,8 +14,12 @@
 	<packaging>war</packaging>
 	<name>school-user Maven Webapp</name>
 	<url>http://maven.apache.org</url>
-	
+
 	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>school-erp-service</groupId>
 			<artifactId>school-common</artifactId>

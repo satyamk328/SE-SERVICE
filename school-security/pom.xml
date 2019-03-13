@@ -11,6 +11,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>school-security</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<name>school-security</name>
 	<url>http://maven.apache.org</url>
 	<properties>
