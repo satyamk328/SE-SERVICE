@@ -3,18 +3,16 @@ package com.erp.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Component;
 
 import com.erp.dao.UserRepository;
 import com.erp.user.model.User;
 
-@Service
-@Transactional
+@Component
 public class UserServiceImp implements UserService {
 	
 	@Autowired
-	UserRepository userRepository;
+	private UserRepository userRepository;
 
 	public void createUser(User user) {
 		userRepository.save(user);

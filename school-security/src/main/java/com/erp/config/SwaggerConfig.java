@@ -1,4 +1,4 @@
-package com.ero.config;
+package com.erp.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

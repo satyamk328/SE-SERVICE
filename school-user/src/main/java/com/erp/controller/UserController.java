@@ -3,6 +3,7 @@ package com.erp.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.erp.service.UserService;
+import com.erp.service.UserServiceImp;
 import com.erp.spring.model.RestResponse;
 import com.erp.spring.model.RestStatus;
 import com.erp.user.model.User;
@@ -30,8 +31,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class UserController {
 
-	@Autowired
-	private UserService userService;
+	@Autowired(required=true)
+	@Qualifier("userService")
+	private UserServiceImp userService;
 
 	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<RestResponse<User>> getUserById(@PathVariable("id") long id) {
