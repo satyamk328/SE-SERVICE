@@ -10,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.Type;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -51,11 +53,11 @@ public class User extends BaseModel implements Serializable {
 	private String state;
 	@Column(name = "Country", length = 500)
 	private String country;
-	@Column(name = "IsLock")
+	@Column(name = "IsLock", nullable = false)
 	private boolean isLock = false;
 	@Column(name = "Attempt")
 	private Integer attempt;
-	@Column(name = "IsActive")
+	@Column(name = "IsActive", nullable = false)
 	private boolean isActive = false;
 	@Column(name = "OTP", length = 500)
 	private String otp;

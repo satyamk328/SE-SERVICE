@@ -11,34 +11,33 @@ import com.erp.user.model.User;
 @Component
 public class UserServiceImp implements UserService {
 	
-	@Autowired
-	private UserRepository userRepository;
+	/*@Autowired
+	p*///rivate UserRepository userRepository;
 
 	public void createUser(User user) {
-		userRepository.save(user);
+		//userRepository.save(user);
 	}
 
 	public List<User> getUser() {
-		return (List<User>) userRepository.findAll();
+		return null;//(List<User>) userRepository.findAll();
 	}
 
 	public User findById(long id) {
-		return null;//userRepository.findById(id);
+		return null;
 	}
 
 	public User update(User user, long l) {
-		// TODO Auto-generated method stub
-		return userRepository.save(user);
+		return null;//userRepository.save(user);
 	}
 
 	public void deleteUserById(long id) {
-		userRepository.deleteById(id);
+		//userRepository.deleteById(id);
 	}
 
 	public User updatePartially(User user, long id) {
 		User usr = findById(id);
 		usr.setCountry(user.getCountry());
-		return userRepository.save(usr);
+		return null;//userRepository.save(usr);
 	}
 
 }

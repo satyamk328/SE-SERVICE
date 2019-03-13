@@ -30,15 +30,15 @@ public class UserModule extends BaseModel implements Serializable {
 	private String privilegeName;
 	@Column(name = "IsRecharge", nullable = false)
 	private boolean isRecharge = false;
-	@Column(name = "IsRecharge", nullable = false)
+	@Column(name = "IsBillPayment", nullable = false)
 	private boolean isBillPayment = false;
-	@Column(name = "IsRecharge", nullable = false)
+	@Column(name = "IsMoneyTransfer", nullable = false)
 	private boolean isMoneyTransfer = false;
-	@Column(name = "IsRecharge", nullable = false)
-	private boolean isAddMonry = false;
-	@Column(name = "IsRecharge", nullable = false)
-	private boolean isExportReport = false;
-	@Column(name = "IsRecharge", nullable = false)
+	@Column(name = "IsAddMonry", nullable = false)
+	private boolean isAddMonry;
+	@Column(name = "isExportReport", nullable = false)
+	private boolean IsExportReport;
+	@Column(name = "isBusBook", nullable = false)
 	private boolean isBusBook = false;
 	@Column(name = "UserId", nullable = false, unique = true)
 	private String userId;
