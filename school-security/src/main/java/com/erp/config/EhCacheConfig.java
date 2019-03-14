@@ -12,8 +12,8 @@ import org.springframework.core.io.ClassPathResource;
  * @author Satyam Kumar
  *
  */
-@EnableCaching
-@Configuration
+/*@EnableCaching
+@Configuration*/
 @ComponentScan(basePackages = "com.db")
 public class EhCacheConfig {
 
