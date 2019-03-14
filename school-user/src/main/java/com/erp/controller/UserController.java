@@ -1,27 +1,14 @@
 package com.erp.controller;
 
-import java.util.List;
+import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import com.erp.service.UserService;
-import com.erp.spring.model.RestResponse;
-import com.erp.spring.model.RestStatus;
-import com.erp.user.model.User;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,9 +17,19 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class UserController {
 
-	@Autowired
+	/*@Autowired
 	private UserService userService;
-
+*/
+	@PreAuthorize("#oauth2.hasScope('read')")
+	@RequestMapping(method = RequestMethod.GET, value = "/users/extra")
+	@ResponseBody
+	public Map<String, Object> getExtraInfo(Authentication auth) {
+		OAuth2AuthenticationDetails oauthDetails = (OAuth2AuthenticationDetails) auth.getDetails();
+		Map<String, Object> details = (Map<String, Object>) oauthDetails.getDecodedDetails();
+		System.out.println("User organization is " + details.get("organization"));
+		return details;
+	}
+/*
 	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<RestResponse<User>> getUserById(@PathVariable("id") long id) {
 		log.info("Fetching User with id {}", id);
@@ -58,7 +55,7 @@ public class UserController {
 	public ResponseEntity<RestResponse<List<User>>> getAllUser() {
 		RestStatus<?> status = new RestStatus<>(HttpStatus.OK.toString(), "Records fetch successfully");
 		List<User> tasks = userService.getUser();
-		return  new ResponseEntity<RestResponse<List<User>>>(new RestResponse(tasks, status), HttpStatus.OK);
+		return new ResponseEntity<RestResponse<List<User>>>(new RestResponse(tasks, status), HttpStatus.OK);
 
 	}
 
@@ -85,7 +82,7 @@ public class UserController {
 	}
 
 	@PatchMapping(value = "/{id}", headers = "Accept=application/json")
-	public ResponseEntity<RestResponse<User>> updateUserPartially(@PathVariable("id") long id, 
+	public ResponseEntity<RestResponse<User>> updateUserPartially(@PathVariable("id") long id,
 			@RequestBody User currentUser) {
 		RestStatus<?> status = new RestStatus<>(HttpStatus.OK.toString(), "Records update successfully");
 		User user = userService.findById(id);
@@ -94,5 +91,5 @@ public class UserController {
 		}
 		User usr = userService.updatePartially(currentUser, id);
 		return new ResponseEntity<RestResponse<User>>(new RestResponse(user, status), HttpStatus.NOT_FOUND);
-	}
+	}*/
 }
