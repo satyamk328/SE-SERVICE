@@ -17,10 +17,10 @@ import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-@Configuration
+/*@Configuration
 @EnableTransactionManagement
 @ComponentScan({ "com.erp" })
-@PropertySource(value = { "classpath:application.properties" })
+@PropertySource(value = { "classpath:application.properties" })*/
 public class HibernateConfiguration {
  
     @Autowired
