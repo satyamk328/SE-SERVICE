@@ -14,9 +14,10 @@ public class User {
     private Long userId;
     private String firstName;
     private String lastName;
-    private String username;
+    private String userName;
     private String password;
-    private String emailId;
+    private String email;
+    private Long phoneNumber;
 	private Boolean isActive;
 	private String createdBy;
 	private String modifiedBy;

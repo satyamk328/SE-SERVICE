@@ -6,11 +6,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.erp.extrator.UserRowMapper;
 import com.erp.model.User;
 import com.erp.utils.CommonUtil;
 import com.erp.utils.DataUtils;
@@ -38,6 +40,9 @@ public class UserDaoImpl {
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
+
+	@Autowired
+	private NamedParameterJdbcTemplate jdbcTemplateObject;
 
 	@Transactional(readOnly = true)
 	public List<User> findAllUser() {
@@ -68,22 +73,26 @@ public class UserDaoImpl {
 		return jdbcTemplate.update(updateUserPasswordQuery, CommonUtil.encrypt(pass.trim()), uid);
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public User loginauthentication(User user) throws UnsupportedEncodingException {
 		try {
-			if (DataUtils.validatePhoneNumber(user.getEmailId())) {
+			final MapSqlParameterSource parameters = new MapSqlParameterSource();
+			parameters.addValue("password", CommonUtil.encrypt(user.getPassword()));
+			if (DataUtils.validatePhoneNumber(user.getEmail())) {
 				log.debug("Running insert query for authUser {}", selectUserDetailsByPhoneQuery);
-				user = jdbcTemplate.queryForObject(selectUserDetailsByPhoneQuery,
-						new Object[] { user.getEmailId(), CommonUtil.encrypt(user.getPassword()) }, new UserRowMapper());
+				parameters.addValue("phone", user.getEmail());
+				user = jdbcTemplateObject.queryForObject(selectUserDetailsByPhoneQuery, parameters, new BeanPropertyRowMapper<User>(User.class));
 			} else {
 				log.debug("Running insert query for authUser {}", selectUserDetailsByEmailQuery);
-				user = jdbcTemplate.queryForObject(selectUserDetailsByEmailQuery,
-						new Object[] { user.getEmailId(), CommonUtil.encrypt(user.getPassword()) }, new UserRowMapper());
+				parameters.addValue("email", user.getEmail());
+				user = jdbcTemplateObject.queryForObject(selectUserDetailsByEmailQuery, parameters,
+						new BeanPropertyRowMapper<User>(User.class));
 			}
 			return user;
 		} catch (EmptyResultDataAccessException e) {
-			return null;
+			e.printStackTrace();
 		}
+		return null;
 	}
 
 	@Transactional

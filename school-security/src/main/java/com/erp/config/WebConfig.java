@@ -76,16 +76,10 @@ public class WebConfig implements WebMvcConfigurer, TransactionManagementConfigu
 
 	@Bean
 	public DataSource dataSource() {
-		DataSource dataSource = DataSourceBuilder.create().driverClassName(env.getProperty("jdbc.driverClassName"))
-				.url(env.getProperty("jdbc.url")).username(env.getProperty("jdbc.username"))
-				.password(env.getProperty("jdbc.password")).build();
-		/*
-		 * BasicDataSource dataSource = new BasicDataSource();
-		 * dataSource.setDriverClassName(env.getProperty("jdbc.driverClassName"));
-		 * dataSource.setUrl(env.getProperty("jdbc.url"));
-		 * dataSource.setUsername(env.getProperty("jdbc.username"));
-		 * dataSource.setPassword(env.getProperty("jdbc.password"));
-		 */
+		DataSource dataSource = DataSourceBuilder.create().driverClassName(env.getProperty("spring.user.datasource.driver-class-name"))
+				.url(env.getProperty("spring.datasource.url")).username(env.getProperty("spring.datasource.username"))
+				.password(env.getProperty("spring.datasource.password")).build();
+		
 		return dataSource;
 	}
 
