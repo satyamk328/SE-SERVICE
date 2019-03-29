@@ -22,17 +22,17 @@ public class User {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    @Column(name = "ID")
+    @Column(name = "UserId")
     private long id;
-    @Column(name = "FIRST_NAME")
+    @Column(name = "FirstName")
     private String firstName;
-    @Column(name = "LAST_NAME")
+    @Column(name = "LastName")
     private String lastName;
-    @Column(name = "USERNAME")
+    @Column(name = "userName")
     private String username;
-    @Column(name = "PASSWORD")
+    @Column(name = "Password")
     private String password;
-    @Column(name = "EMAIL")
+    @Column(name = "Email")
     private String email;
 
     @ManyToMany(fetch = FetchType.EAGER)

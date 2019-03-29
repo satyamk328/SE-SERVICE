@@ -13,11 +13,13 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -35,7 +37,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @ComponentScan(basePackages = "com.erp")
 @EnableTransactionManagement
 @PropertySource({ "classpath:application.properties", "classpath:sql.properties" })
-public class WebConfig implements WebMvcConfigurer {
+public class WebConfig implements WebMvcConfigurer,TransactionManagementConfigurer {
 
 	 public static final Integer SECONDS_IN_DAY = 86400;
 	 
@@ -51,13 +53,23 @@ public class WebConfig implements WebMvcConfigurer {
 	}
 
 	@Bean
-	public PlatformTransactionManager transactionManager(DataSource dataSource) {
-		return new DataSourceTransactionManager(dataSource);
+	public PlatformTransactionManager txManager() {
+		return new DataSourceTransactionManager(dataSource());
+	}
+
+	@Override
+	public PlatformTransactionManager annotationDrivenTransactionManager() {
+		return txManager();
 	}
 
 	@Bean
 	public JdbcTemplate jdbcTemplate(DataSource dataSource) {
 		return new JdbcTemplate(dataSource);
+	}
+
+	@Bean
+	public NamedParameterJdbcTemplate jdbcTemplateObject(DataSource dataSource) {
+		return new NamedParameterJdbcTemplate(dataSource);
 	}
 
 	@Bean

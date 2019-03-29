@@ -1,73 +1,47 @@
 package com.erp.service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.erp.dao.UserDao;
-import com.erp.model.Role;
+import com.erp.dao.UserDaoImpl;
 import com.erp.model.User;
 
-@Transactional
-@Service(value = "userService")
-public class UserServiceImpl implements UserDetailsService, UserService {
+import lombok.Getter;
+import lombok.Setter;
 
-	private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
+@Service(value = "userService")
+@Setter
+@Getter
+public class UserServiceImpl implements UserService {
 
 	@Autowired
-	private UserDao userDao;
+	private UserDaoImpl userDao;
 
 	@Override
-	public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
-		User user = userDao.findByUsername(userId);
-		if (user == null) {
-			log.error("Invalid username or password.");
-			throw new UsernameNotFoundException("Invalid username or password.");
-		}
-		Set<GrantedAuthority> grantedAuthorities = getAuthorities(user);
-
-		return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
-				grantedAuthorities);
-	}
-
-	private Set<GrantedAuthority> getAuthorities(User user) {
-		Set<Role> roleByUserId = user.getRoles();
-		final Set<GrantedAuthority> authorities = roleByUserId.stream()
-				.map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName().toString().toUpperCase()))
-				.collect(Collectors.toSet());
-		return authorities;
-	}
-
-	public List<User> findAll() {
-		List<User> users = new ArrayList<>();
-		return users;
+	public User getUser(Long id) {
+		return userDao.getUser(id);
 	}
 
 	@Override
-	public User findOne(long id) {
-		return userDao.findById(id).get();
+	public User addUser(User user) {
+		return userDao.addUser(user);
 	}
 
 	@Override
-	public void delete(long id) {
-		userDao.deleteById(id);
+	public User updateUser(User user) {
+		return userDao.updateUser(user);
 	}
 
 	@Override
-	public User save(User user) {
-		userDao.save(user);
-		return user;
+	public void deleteUser(Long id) {
+		userDao.deleteUser(id);
 	}
+
+	@Override
+	public List<User> getAllUsers() {
+		return userDao.findAllUser();
+	}
+
 }
