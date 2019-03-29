@@ -6,7 +6,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +44,8 @@ public class UserDaoImpl {
 	@Transactional(readOnly = true)
 	public List<User> findAllUser() {
 		log.debug("Running insert query for addUser: {}", selectAllUserQuery);
-		return jdbcTemplate.queryForList(selectAllUserQuery, User.class);
+        RowMapper<User> rowMapper = new BeanPropertyRowMapper<User>(User.class);
+		return jdbcTemplate.query(selectAllUserQuery, rowMapper);
 	}
 
 	@Transactional
