@@ -47,8 +47,8 @@ public class UserDaoImpl {
 	@Transactional(readOnly = true)
 	public List<User> findAllUser() {
 		log.debug("Running insert query for addUser: {}", selectAllUserQuery);
-		return jdbcTemplate.queryForList(selectAllUserQuery, User.class);
-	}
+		return jdbcTemplate.query(selectAllUserQuery, new BeanPropertyRowMapper<User>(User.class));
+	} 
 
 	@Transactional
 	public User addUser(User user) {
@@ -81,7 +81,8 @@ public class UserDaoImpl {
 			if (DataUtils.validatePhoneNumber(user.getEmail())) {
 				log.debug("Running insert query for authUser {}", selectUserDetailsByPhoneQuery);
 				parameters.addValue("phone", user.getEmail());
-				user = jdbcTemplateObject.queryForObject(selectUserDetailsByPhoneQuery, parameters, new BeanPropertyRowMapper<User>(User.class));
+				user = jdbcTemplateObject.queryForObject(selectUserDetailsByPhoneQuery, parameters,
+						new BeanPropertyRowMapper<User>(User.class));
 			} else {
 				log.debug("Running insert query for authUser {}", selectUserDetailsByEmailQuery);
 				parameters.addValue("email", user.getEmail());
