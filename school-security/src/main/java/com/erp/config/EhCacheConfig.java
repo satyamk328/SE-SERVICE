@@ -12,9 +12,9 @@ import org.springframework.core.io.ClassPathResource;
  * @author Satyam Kumar
  *
  */
-/*@EnableCaching
-@Configuration*/
-@ComponentScan(basePackages = "com.db")
+@EnableCaching
+@Configuration
+@ComponentScan(basePackages = "com.erp")
 public class EhCacheConfig {
 
 	@Bean

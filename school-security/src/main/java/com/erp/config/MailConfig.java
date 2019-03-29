@@ -13,7 +13,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
  * @author Satyam Kumar
  *
  */
-//@Configuration
+@Configuration
 @PropertySource(value = { "classpath:application.properties" })
 public class MailConfig {
 
