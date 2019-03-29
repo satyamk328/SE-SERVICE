@@ -35,10 +35,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = "com.digital")
+@ComponentScan(basePackages = "com.erp")
 @EnableTransactionManagement
 @EnableScheduling
-@PropertySource({ "classpath:application.properties", "classpath:sql.properties" })
+@PropertySource({ "classpath:application.properties"})
 public class WebConfig implements WebMvcConfigurer, TransactionManagementConfigurer {
 
 	public static final Integer SECONDS_IN_DAY = 86400;
