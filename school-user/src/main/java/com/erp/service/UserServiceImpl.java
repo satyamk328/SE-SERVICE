@@ -1,5 +1,6 @@
 package com.erp.service;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserDaoImpl userDao;
 
+	public User loginauthentication(User user) throws UnsupportedEncodingException {
+		return userDao.loginauthentication(user);
+	}
 	@Override
 	public User getUser(Long id) {
 		return userDao.getUser(id);

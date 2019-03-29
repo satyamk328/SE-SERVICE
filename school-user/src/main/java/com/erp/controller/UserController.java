@@ -48,7 +48,7 @@ public class UserController {
 			status = new RestStatus<>(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Please enter valid Email/Phone");
 			return new ResponseEntity<>(new RestResponse(user, status), HttpStatus.INTERNAL_SERVER_ERROR);
 		} else {
-			user = userService.
+			user = userService.loginauthentication(user);
 			if (user == null) {
 				status = new RestStatus<>(HttpStatus.INTERNAL_SERVER_ERROR.toString(),
 						"Unauthorized User. Please login with your valid credential!");
