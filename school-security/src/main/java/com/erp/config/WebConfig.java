@@ -16,6 +16,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -34,9 +35,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = "com.erp")
+@ComponentScan(basePackages = "com.digital")
 @EnableTransactionManagement
-@PropertySource({ "classpath:application.properties" })
+@EnableScheduling
+@PropertySource({ "classpath:application.properties", "classpath:sql.properties" })
 public class WebConfig implements WebMvcConfigurer, TransactionManagementConfigurer {
 
 	public static final Integer SECONDS_IN_DAY = 86400;
@@ -61,7 +63,7 @@ public class WebConfig implements WebMvcConfigurer, TransactionManagementConfigu
 	public PlatformTransactionManager annotationDrivenTransactionManager() {
 		return txManager();
 	}
-
+	
 	@Bean
 	public JdbcTemplate jdbcTemplate(DataSource dataSource) {
 		return new JdbcTemplate(dataSource);
@@ -74,10 +76,9 @@ public class WebConfig implements WebMvcConfigurer, TransactionManagementConfigu
 
 	@Bean
 	public DataSource dataSource() {
-		DataSource dataSource = DataSourceBuilder.create()
-				.driverClassName(env.getProperty("spring.user.datasource.driver-class-name"))
-				.url(env.getProperty("spring.datasource.url")).username(env.getProperty("spring.datasource.username"))
-				.password(env.getProperty("spring.datasource.password")).build();
+		DataSource dataSource = DataSourceBuilder.create().driverClassName(env.getProperty("jdbc.driverClassName"))
+				.url(env.getProperty("jdbc.url")).username(env.getProperty("jdbc.username"))
+				.password(env.getProperty("jdbc.password")).build();
 		/*
 		 * BasicDataSource dataSource = new BasicDataSource();
 		 * dataSource.setDriverClassName(env.getProperty("jdbc.driverClassName"));
@@ -102,11 +103,8 @@ public class WebConfig implements WebMvcConfigurer, TransactionManagementConfigu
 	public void addResourceHandlers(final ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/")
 				.setCachePeriod(SECONDS_IN_DAY);
-		;
-
 		registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/")
 				.setCachePeriod(SECONDS_IN_DAY);
-		;
 	}
 
 	@Override
@@ -120,4 +118,5 @@ public class WebConfig implements WebMvcConfigurer, TransactionManagementConfigu
 	public TaskScheduler taskExecutor() {
 		return new ConcurrentTaskScheduler(Executors.newScheduledThreadPool(3));
 	}
+
 }
