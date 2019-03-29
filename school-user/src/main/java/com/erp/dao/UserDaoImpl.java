@@ -37,6 +37,8 @@ public class UserDaoImpl {
 	private String updateUserPasswordQuery;
 	@Value("${upadte_logintime}")
 	private String updateLoginLogoutTimeQuery;
+	@Value("${select_userbyid}")
+	private String selectUserByIdQuery;
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -48,7 +50,7 @@ public class UserDaoImpl {
 	public List<User> findAllUser() {
 		log.debug("Running insert query for addUser: {}", selectAllUserQuery);
 		return jdbcTemplate.query(selectAllUserQuery, new BeanPropertyRowMapper<User>(User.class));
-	} 
+	}
 
 	@Transactional
 	public User addUser(User user) {
@@ -56,7 +58,11 @@ public class UserDaoImpl {
 	}
 
 	public User getUser(Long id) {
-		return null;
+		log.debug("Running insert query for getUserDetails {}", selectUserByIdQuery);
+		final MapSqlParameterSource parameters = new MapSqlParameterSource();
+		parameters.addValue("userId", id);
+		return jdbcTemplate.queryForObject(selectUserByIdQuery, new BeanPropertyRowMapper<User>(User.class),
+				parameters);
 	}
 
 	public User updateUser(User user) {
