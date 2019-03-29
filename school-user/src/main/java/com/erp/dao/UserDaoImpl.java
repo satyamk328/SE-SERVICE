@@ -71,14 +71,14 @@ public class UserDaoImpl {
 	@Transactional
 	public User loginauthentication(User user) throws UnsupportedEncodingException {
 		try {
-			if (DataUtils.validatePhoneNumber(user.getEmail())) {
+			if (DataUtils.validatePhoneNumber(user.getEmailId())) {
 				log.debug("Running insert query for authUser {}", selectUserDetailsByPhoneQuery);
 				user = jdbcTemplate.queryForObject(selectUserDetailsByPhoneQuery,
-						new Object[] { user.getEmail(), CommonUtil.encrypt(user.getPassword()) }, new UserRowMapper());
+						new Object[] { user.getEmailId(), CommonUtil.encrypt(user.getPassword()) }, new UserRowMapper());
 			} else {
 				log.debug("Running insert query for authUser {}", selectUserDetailsByEmailQuery);
 				user = jdbcTemplate.queryForObject(selectUserDetailsByEmailQuery,
-						new Object[] { user.getEmail(), CommonUtil.encrypt(user.getPassword()) }, new UserRowMapper());
+						new Object[] { user.getEmailId(), CommonUtil.encrypt(user.getPassword()) }, new UserRowMapper());
 			}
 			return user;
 		} catch (EmptyResultDataAccessException e) {

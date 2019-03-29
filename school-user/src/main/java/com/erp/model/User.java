@@ -1,109 +1,26 @@
 package com.erp.model;
 
-import java.util.Set;
-import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-
-import com.erp.response.UserDto;
-
-@Entity
-@Table(name = "Users")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
-    @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
-    @Column(name = "UserId")
-    private long id;
-    @Column(name = "FirstName")
+    private Long userId;
     private String firstName;
-    @Column(name = "LastName")
     private String lastName;
-    @Column(name = "userName")
     private String username;
-    @Column(name = "Password")
     private String password;
-    @Column(name = "Email")
-    private String email;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "User_ROLES",
-            joinColumns =  @JoinColumn(name ="USER_ID"),inverseJoinColumns= @JoinColumn(name="ROLE_ID"))
-    private Set<Role> roles;
-
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public UserDto toUserDto(){
-        UserDto userDto = new UserDto();
-        userDto.setId(this.id);
-        userDto.setEmail(this.email);
-        userDto.setFirstName(this.firstName);
-        userDto.setLastName(this.lastName);
-        userDto.setUsername(this.username);
-        userDto.setRole(this.roles.stream().map(role -> role.getName().toString()).collect(Collectors.toList()));
-        return userDto;
-    }
+    private String emailId;
+	private Boolean isActive;
+	private String createdBy;
+	private String modifiedBy;
+	private Long roleId;
+	private String description;
+	
 }
