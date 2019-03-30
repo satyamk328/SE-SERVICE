@@ -3,6 +3,7 @@ package com.erp.controller;
 import java.security.Principal;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,41 +16,60 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.erp.model.Role;
+import com.erp.service.RoleService;
 import com.erp.spring.model.RestResponse;
+import com.erp.spring.model.RestStatus;
+
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping(value = "/api/v0/roles")
+@Slf4j
 public class RoleController {
+
+	@Autowired
+	private RoleService roleService;
 
 	@GetMapping("/")
 	public ResponseEntity<RestResponse<List<Role>>> getAllRoles() {
-		HttpStatus status = HttpStatus.OK;
+		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "All Records Fetched Successfully");
+		List<Role> roles = roleService.getAllRoles();
+		log.debug("Fetched record successfully");
+		return new ResponseEntity<>(new RestResponse(roles, status), HttpStatus.OK);
+	}
 
-		return null;
-
+	@GetMapping("/{roleId}")
+	public ResponseEntity<RestResponse<Role>> getRole(@PathVariable(name = "roleId", required = true) Long roleId) {
+		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "Get Records Successfully");
+		Role role = roleService.getRole(roleId);
+		log.debug("Fetched record successfully");
+		return new ResponseEntity<>(new RestResponse(role, status), HttpStatus.OK);
 	}
 
 	@PostMapping("/")
-	public ResponseEntity<RestResponse<Role>> addUserRole(@RequestBody(required = true) Role role,
-			Principal principal) {
-		HttpStatus status = HttpStatus.PRECONDITION_FAILED;
-		String messageCode = null;
-		return null;
-	}
-
-	@DeleteMapping("/{roleId}")
-	public ResponseEntity<RestResponse<Role>> deleteUserRole(@PathVariable("roleId") final Long roleId) {
-		HttpStatus status = HttpStatus.PRECONDITION_FAILED;
-		String messageCode = null;
-		return null;
+	public ResponseEntity<RestResponse<Role>> addRole(@RequestBody(required = true) Role role, Principal principal) {
+		log.info("call registration {}", role);
+		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "Role added Successfully");
+		Long roleId = roleService.addRole(role);
+		role.setRoleId(roleId);
+		return new ResponseEntity<>(new RestResponse(role, status), HttpStatus.OK);
 	}
 
 	@PutMapping("/{roleId}")
-	public ResponseEntity<RestResponse<Role>> updateUserRole(@RequestBody(required = true) Role role,
+	public ResponseEntity<RestResponse<Role>> updateRole(@RequestBody(required = true) Role role,
 			@PathVariable("roleId") final Long roleId, Principal principal) {
-		HttpStatus status = HttpStatus.PRECONDITION_FAILED;
-		String messageCode = null;
-		return null;
+		log.info("call registration {}", role);
+		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "Role update Successfully");
+		long i = roleService.updateRole(role);
+		role.setRoleId(roleId);
+		return new ResponseEntity<>(new RestResponse(i, status), HttpStatus.OK);
+	}
+
+	@DeleteMapping("/{roleId}")
+	public ResponseEntity<RestResponse<Role>> deleteRole(@PathVariable("roleId") final Long roleId) {
+		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "Record deleted Successfully");
+		Long row = roleService.deleteRole(roleId);
+		return new ResponseEntity<>(new RestResponse(row, status), HttpStatus.OK);
 	}
 
 }

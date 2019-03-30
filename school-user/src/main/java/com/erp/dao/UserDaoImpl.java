@@ -32,9 +32,9 @@ public class UserDaoImpl {
 	@Value("${insert_user_detail}")
 	private String insertUserDetailQuery;
 	@Value("${update_user_details}")
-	private String update_user_details;
+	private String updateUserDetails;
 	@Value("${delete_user_query}")
-	private String delete_user_query;
+	private String deleteUserQuery;
 	@Value("${update_user_master_lock}")
 	private String updateUserLockQuery;
 	@Value("${select_user_detail_by_phone}")
@@ -81,7 +81,7 @@ public class UserDaoImpl {
 
 	@Transactional
 	public long updateUser(User user) {
-		log.debug("Running upadte query for updateUser {}", update_user_details);
+		log.debug("Running upadte query for updateUser {}", updateUserDetails);
 		final MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("loginId", user.getLoginId());
 		parameters.addValue("firstName", user.getFirstName());
@@ -96,7 +96,7 @@ public class UserDaoImpl {
 		parameters.addValue("phoneNumber", user.getPhoneNumber());
 		parameters.addValue("roleId", user.getRoleId());
 		parameters.addValue("userId", user.getUserId());
-		return jdbcTemplateObject.update(update_user_details, parameters);
+		return jdbcTemplateObject.update(updateUserDetails, parameters);
 	}
 
 	@Transactional
@@ -109,10 +109,10 @@ public class UserDaoImpl {
 
 	@Transactional
 	public long deleteUser(Long id) {
-		log.debug("Running upadte query for updateUser {}", delete_user_query);
+		log.debug("Running upadte query for updateUser {}", deleteUserQuery);
 		final MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("userId", id);
-		return jdbcTemplateObject.update(delete_user_query, parameters);
+		return jdbcTemplateObject.update(deleteUserQuery, parameters);
 	}
 
 	@Transactional

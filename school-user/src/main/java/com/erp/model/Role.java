@@ -14,5 +14,6 @@ public class Role {
 	private Long roleId;
 	private String roleName;
     private String description;
+    private Boolean isActive;
 
 }
