@@ -58,7 +58,7 @@ public class UserController {
 	@PostMapping(value = "/login")
 	public ResponseEntity<RestResponse<Object>> loginAuthentication(
 			@RequestParam(name = "email", required = true) String email,
-			@RequestParam(name = "password", required = true) String pass) throws UnsupportedEncodingException {
+			@RequestParam(name = "password", required = true) String pass) {
 		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "Login Successfully");
 		attempt++;
 		User user = userService.loginAuthentication(email);
