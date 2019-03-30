@@ -26,4 +26,8 @@ public interface UserService {
 	public long addLoginDetail(Login login);
 
 	public long updateLoginDetails(Long userId);
+	
+	public Boolean getUserByEmail(String email);
+	
+	public Boolean getUserByPhone(Long phone);
 }

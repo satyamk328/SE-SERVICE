@@ -81,4 +81,11 @@ public class UserServiceImpl implements UserService {
 		return userDao.updateLoginDetails(userId);
 	}
 
+	public Boolean getUserByEmail(String email) {
+		return false;
+	}
+
+	public Boolean getUserByPhone(Long phone) {
+		return false;
+	}
 }

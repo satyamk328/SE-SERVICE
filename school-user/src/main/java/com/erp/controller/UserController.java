@@ -73,9 +73,14 @@ public class UserController {
 	public ResponseEntity<RestResponse<Object>> registration(@RequestBody(required = true) User user) {
 		log.info("call registration {}", user);
 		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "User Registered Successfully");
-		Long userId = userService.addUser(user);
-		user.setUserId(userId);
-		return new ResponseEntity<>(new RestResponse(user, status), HttpStatus.OK);
+		if (userService.getUserByEmail(user.getEmail()) || userService.getUserByPhone(user.getPhoneNumber())) {
+			status = new RestStatus<>(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Please enter valid Email/Phone");
+			return new ResponseEntity<>(new RestResponse(user, status), HttpStatus.INTERNAL_SERVER_ERROR);
+		} else {
+			Long userId = userService.addUser(user);
+			user.setUserId(userId);
+			return new ResponseEntity<>(new RestResponse(user, status), HttpStatus.OK);
+		}
 	}
 
 	@PutMapping(value = "/{userId}")
@@ -112,7 +117,7 @@ public class UserController {
 		Long row = userService.unLockUser(userId);
 		return new ResponseEntity<>(new RestResponse(row, status), HttpStatus.OK);
 	}
-	
+
 	@PutMapping(value = "/logout/{userId}")
 	public ResponseEntity<RestResponse<Object>> logOut(@PathVariable(name = "userId", required = true) Long userId) {
 		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "User Logout Successfully");
