@@ -1,10 +1,10 @@
 package com.erp.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -15,6 +15,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.erp.extrator.UserRowMapper;
 import com.erp.model.Login;
 import com.erp.model.User;
 import com.erp.utils.CommonUtil;
@@ -74,8 +75,8 @@ public class UserDaoImpl {
 		log.debug("Running insert query for getUserDetails {}", selectUserByIdQuery);
 		final MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("userId", id);
-		return jdbcTemplate.queryForObject(selectUserByIdQuery, new BeanPropertyRowMapper<User>(User.class),
-				parameters);
+		List<User> users = jdbcTemplateObject.query(selectUserByIdQuery, parameters, new UserRowMapper());
+		return (users != null && !users.isEmpty()) ? users.get(0) : null;
 	}
 
 	@Transactional
@@ -96,8 +97,8 @@ public class UserDaoImpl {
 		parameters.addValue("roleId", user.getRoleId());
 		parameters.addValue("userId", user.getUserId());
 		return jdbcTemplateObject.update(update_user_details, parameters);
-	} 
-	
+	}
+
 	@Transactional
 	public long unLockUser(Long userId) {
 		log.debug("Running upadte query for updateUser {}", updateUserLockQuery);
@@ -105,7 +106,7 @@ public class UserDaoImpl {
 		parameters.addValue("userId", userId);
 		return jdbcTemplateObject.update(updateUserLockQuery, parameters);
 	}
-	
+
 	@Transactional
 	public long deleteUser(Long id) {
 		log.debug("Running upadte query for updateUser {}", delete_user_query);
@@ -125,25 +126,19 @@ public class UserDaoImpl {
 
 	@Transactional(readOnly = true)
 	public User loginAuthentication(User user) {
-		try {
-			final MapSqlParameterSource parameters = new MapSqlParameterSource();
-			parameters.addValue("password", CommonUtil.encrypt(user.getPassword()));
-			if (DataUtils.validatePhoneNumber(user.getEmail())) {
-				log.debug("Running insert query for authUser {}", selectUserDetailsByPhoneQuery);
-				parameters.addValue("phone", user.getEmail());
-				user = jdbcTemplateObject.queryForObject(selectUserDetailsByPhoneQuery, parameters,
-						new BeanPropertyRowMapper<User>(User.class));
-			} else {
-				log.debug("Running insert query for authUser {}", selectUserDetailsByEmailQuery);
-				parameters.addValue("email", user.getEmail());
-				user = jdbcTemplateObject.queryForObject(selectUserDetailsByEmailQuery, parameters,
-						new BeanPropertyRowMapper<User>(User.class));
-			}
-			return user;
-		} catch (EmptyResultDataAccessException e) {
-			e.printStackTrace();
+		final MapSqlParameterSource parameters = new MapSqlParameterSource();
+		parameters.addValue("password", CommonUtil.encrypt(user.getPassword()));
+		List<User> users = new ArrayList<>();
+		if (DataUtils.validatePhoneNumber(user.getEmail())) {
+			log.debug("Running insert query for authUser {}", selectUserDetailsByPhoneQuery);
+			parameters.addValue("phone", user.getEmail());
+			users = jdbcTemplateObject.query(selectUserDetailsByPhoneQuery, parameters, new UserRowMapper());
+		} else {
+			log.debug("Running insert query for authUser {}", selectUserDetailsByEmailQuery);
+			parameters.addValue("email", user.getEmail());
+			users = jdbcTemplateObject.query(selectUserDetailsByEmailQuery, parameters, new UserRowMapper());
 		}
-		return null;
+		return (users != null && !users.isEmpty()) ? users.get(0) : null;
 	}
 
 	@Transactional

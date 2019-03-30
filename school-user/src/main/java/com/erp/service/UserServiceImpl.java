@@ -18,8 +18,10 @@ public class UserServiceImpl implements UserService {
 	public User loginauthentication(User user) {
 		user = userDao.loginAuthentication(user);
 		Login login = new Login();
-		prepareLogin(login, user);
-		addLoginDetail(login);
+		if (user != null) {
+			prepareLogin(login, user);
+			addLoginDetail(login);
+		}
 		return user;
 	}
 
@@ -27,11 +29,11 @@ public class UserServiceImpl implements UserService {
 		login.setAddress(user.getAddress());
 		login.setCity(user.getCity());
 		login.setState(user.getState());
-		login.setUerName(user.getLoginId());
+		login.setUserName(user.getLoginId());
 		login.setUserId(user.getUserId());
-		login.setClientHost(null);
-		login.setClientIp(null);
-		login.setSessionId(null);
+		login.setClientHost("localhost");
+		login.setClientIp("127.0.0.1");
+		login.setSessionId("");
 	}
 
 	@Override
