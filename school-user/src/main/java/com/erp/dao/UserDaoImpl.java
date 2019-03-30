@@ -29,24 +29,37 @@ public class UserDaoImpl {
 
 	@Value("${select_user_history}")
 	private String selectAllUserQuery;
+	
 	@Value("${insert_user_detail}")
 	private String insertUserDetailQuery;
+	
 	@Value("${update_user_details}")
 	private String updateUserDetails;
+	
 	@Value("${delete_user_query}")
 	private String deleteUserQuery;
+	
 	@Value("${update_user_master_lock}")
 	private String updateUserLockQuery;
+	
+	@Value("${update_user_attempt}")
+	private String updateUserAttemptQuery;
+	
 	@Value("${select_user_detail_by_phone}")
 	private String selectUserDetailsByPhoneQuery;
+	
 	@Value("${select_user_detail_by_email}")
 	private String selectUserDetailsByEmailQuery;
+	
 	@Value("${reset_user_password}")
 	private String resetUserPasswordQuery;
+	
 	@Value("${insert_login_details}")
 	private String insertLoginDetailsQuery;
+	
 	@Value("${update_login_details}")
 	private String updateLoginDetails;
+	
 	@Value("${select_userbyid}")
 	private String selectUserByIdQuery;
 
@@ -125,17 +138,16 @@ public class UserDaoImpl {
 	}
 
 	@Transactional(readOnly = true)
-	public User loginAuthentication(User user) {
+	public User loginAuthentication(String email) {
 		final MapSqlParameterSource parameters = new MapSqlParameterSource();
-		parameters.addValue("password", CommonUtil.encrypt(user.getPassword()));
 		List<User> users = new ArrayList<>();
-		if (DataUtils.validatePhoneNumber(user.getEmail())) {
+		if (DataUtils.validatePhoneNumber(email)) {
 			log.debug("Running insert query for authUser {}", selectUserDetailsByPhoneQuery);
-			parameters.addValue("phone", user.getEmail());
+			parameters.addValue("phone", email);
 			users = jdbcTemplateObject.query(selectUserDetailsByPhoneQuery, parameters, new UserRowMapper());
 		} else {
 			log.debug("Running insert query for authUser {}", selectUserDetailsByEmailQuery);
-			parameters.addValue("email", user.getEmail());
+			parameters.addValue("email", email);
 			users = jdbcTemplateObject.query(selectUserDetailsByEmailQuery, parameters, new UserRowMapper());
 		}
 		return (users != null && !users.isEmpty()) ? users.get(0) : null;
@@ -157,5 +169,13 @@ public class UserDaoImpl {
 		parameters.addValue("userId", userId);
 		return jdbcTemplateObject.update(updateLoginDetails, parameters);
 	}
-
+	
+	public long lockUser(long userId, int isLock, int attempt) {
+		log.debug("Running upadte query for lockUser {}", updateUserAttemptQuery);
+		final MapSqlParameterSource parameters = new MapSqlParameterSource();
+		parameters.addValue("userId", userId);
+		parameters.addValue("isLock", isLock);
+		parameters.addValue("attempt", attempt);
+		return jdbcTemplateObject.update(updateUserAttemptQuery, parameters);
+	}
 }

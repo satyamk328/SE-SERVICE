@@ -50,9 +50,14 @@ public class RoleController {
 	public ResponseEntity<RestResponse<Role>> addRole(@RequestBody(required = true) Role role, Principal principal) {
 		log.info("call registration {}", role);
 		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "Role added Successfully");
-		Long roleId = roleService.addRole(role);
-		role.setRoleId(roleId);
-		return new ResponseEntity<>(new RestResponse(role, status), HttpStatus.OK);
+		if (roleService.getRole(role.getRoleName()) != null) {
+			status = new RestStatus<>(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Role Name is already exist");
+			return new ResponseEntity<>(new RestResponse(null, status), HttpStatus.INTERNAL_SERVER_ERROR);
+		} else {
+			Long roleId = roleService.addRole(role);
+			role.setRoleId(roleId);
+			return new ResponseEntity<>(new RestResponse(role, status), HttpStatus.OK);
+		}
 	}
 
 	@PutMapping("/{roleId}")
@@ -60,9 +65,14 @@ public class RoleController {
 			@PathVariable("roleId") final Long roleId, Principal principal) {
 		log.info("call registration {}", role);
 		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "Role update Successfully");
-		long i = roleService.updateRole(role);
-		role.setRoleId(roleId);
-		return new ResponseEntity<>(new RestResponse(i, status), HttpStatus.OK);
+		if (roleService.checkRoleNameExists(roleId, role.getRoleName())) {
+			status = new RestStatus<>(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Role Name is already exist");
+			return new ResponseEntity<>(new RestResponse(null, status), HttpStatus.INTERNAL_SERVER_ERROR);
+		} else {
+			long i = roleService.updateRole(role);
+			role.setRoleId(roleId);
+			return new ResponseEntity<>(new RestResponse(i, status), HttpStatus.OK);
+		}
 	}
 
 	@DeleteMapping("/{roleId}")

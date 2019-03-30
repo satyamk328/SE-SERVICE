@@ -16,10 +16,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.erp.model.Login;
 import com.erp.model.User;
 import com.erp.service.UserService;
 import com.erp.spring.model.RestResponse;
 import com.erp.spring.model.RestStatus;
+import com.erp.utils.CommonUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,6 +36,8 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
+
+	private static int attempt;
 
 	@GetMapping("/users")
 	public ResponseEntity<RestResponse<List<User>>> getAllUsers() {
@@ -52,20 +56,34 @@ public class UserController {
 	}
 
 	@PostMapping(value = "/login")
-	public ResponseEntity<RestResponse<Object>> loginauthentication(@RequestBody(required = true) User user)
-			throws UnsupportedEncodingException {
+	public ResponseEntity<RestResponse<Object>> loginAuthentication(
+			@RequestParam(name = "email", required = true) String email,
+			@RequestParam(name = "password", required = true) String pass) throws UnsupportedEncodingException {
 		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "Login Successfully");
-		if (user.getEmail() == null) {
-			status = new RestStatus<>(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Please enter valid Email/Phone");
+		attempt++;
+		User user = userService.loginAuthentication(email);
+		if (user == null) {
+			status = new RestStatus<>(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Invalid username or password!.");
 			return new ResponseEntity<>(new RestResponse(user, status), HttpStatus.INTERNAL_SERVER_ERROR);
-		} else {
-			user = userService.loginauthentication(user);
-			if (user == null) {
+		}
+		userService.lockUser(user.getUserId(), 0, attempt);
+		if (!user.getPassword().equals(CommonUtil.encrypt(pass))) {
+			if (attempt != 0 && attempt < 3) {
 				status = new RestStatus<>(HttpStatus.INTERNAL_SERVER_ERROR.toString(),
-						"Unauthorized User. Please login with your valid credential!");
+						"Invalid username and password. You have made count unsuccessful attempt(s). The maximum retry attempts allowed for login are 3. Password is case-sensitive."
+								.replaceAll("count", String.valueOf(attempt)));
+				return new ResponseEntity<>(new RestResponse(user, status), HttpStatus.INTERNAL_SERVER_ERROR);
+			} else if (attempt >= 3) {
+				userService.lockUser(user.getUserId(), 1, attempt);
+				status = new RestStatus<>(HttpStatus.INTERNAL_SERVER_ERROR.toString(),
+						"You have been locked out for the day because of three invalid attempts during the day. You try to max number of attempt. You may unlock your username by contact system administrator!");
 				return new ResponseEntity<>(new RestResponse(user, status), HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
+		userService.lockUser(user.getUserId(), 0, 0);
+		Login login = new Login();
+		userService.prepareLogin(login, user);
+		userService.addLoginDetail(login);
 		return new ResponseEntity<>(new RestResponse(user, status), HttpStatus.OK);
 	}
 
@@ -73,7 +91,8 @@ public class UserController {
 	public ResponseEntity<RestResponse<Object>> registration(@RequestBody(required = true) User user) {
 		log.info("call registration {}", user);
 		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "User Registered Successfully");
-		if (userService.getUserByEmail(user.getEmail()) || userService.getUserByPhone(user.getPhoneNumber())) {
+		if (userService.loginAuthentication(user.getEmail()) != null
+				|| userService.loginAuthentication(String.valueOf(user.getPhoneNumber())) != null) {
 			status = new RestStatus<>(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Please enter valid Email/Phone");
 			return new ResponseEntity<>(new RestResponse(user, status), HttpStatus.INTERNAL_SERVER_ERROR);
 		} else {

@@ -15,17 +15,13 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserDaoImpl userDao;
 
-	public User loginauthentication(User user) {
-		user = userDao.loginAuthentication(user);
-		Login login = new Login();
-		if (user != null) {
-			prepareLogin(login, user);
-			addLoginDetail(login);
-		}
-		return user;
+	@Override
+	public User loginAuthentication(String email) {
+		return userDao.loginAuthentication(email);
 	}
 
-	private void prepareLogin(Login login, User user) {
+	@Override
+	public void prepareLogin(Login login, User user) {
 		login.setAddress(user.getAddress());
 		login.setCity(user.getCity());
 		login.setState(user.getState());
@@ -81,11 +77,8 @@ public class UserServiceImpl implements UserService {
 		return userDao.updateLoginDetails(userId);
 	}
 
-	public Boolean getUserByEmail(String email) {
-		return false;
-	}
-
-	public Boolean getUserByPhone(Long phone) {
-		return false;
+	@Override
+	public long lockUser(long userId, int isLock, int attempt) {
+		return userDao.lockUser(userId, isLock, attempt);
 	}
 }

@@ -7,7 +7,7 @@ import com.erp.model.User;
 
 public interface UserService {
 
-	public User loginauthentication(User user);
+	public User loginAuthentication(String email);
 
 	public User getUser(Long id);
 
@@ -26,8 +26,8 @@ public interface UserService {
 	public long addLoginDetail(Login login);
 
 	public long updateLoginDetails(Long userId);
-	
-	public Boolean getUserByEmail(String email);
-	
-	public Boolean getUserByPhone(Long phone);
+
+	public void prepareLogin(Login login, User user);
+
+	public long lockUser(long userId, int isLock, int attempt);
 }

@@ -17,4 +17,6 @@ public interface RoleService {
 	public List<Role> getAllRoles();
 
 	public Role getRole(final String roleName);
+	
+	public boolean checkRoleNameExists(final long roleId, final String roleName);
 }

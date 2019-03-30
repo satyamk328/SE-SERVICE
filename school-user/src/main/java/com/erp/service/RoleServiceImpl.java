@@ -1,6 +1,7 @@
 package com.erp.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,16 @@ public class RoleServiceImpl implements RoleService {
 		return roleDao.deleteRole(id);
 	}
 
+	@Override
+	public boolean checkRoleNameExists(final long roleId, final String roleName){
+		List<Role> roleList = roleDao.getAllRoles();
+		if(null != roleList && !roleList.isEmpty()) {
+			return !roleList.stream().filter(userRole -> (userRole.getRoleName().equalsIgnoreCase(roleName)
+					&& !userRole.getRoleId().equals(roleId))).collect(Collectors.toList()).isEmpty();
+		}
+		return false;
+	}
+	
 	@Override
 	public List<Role> getAllRoles() {
 		return roleDao.getAllRoles();
