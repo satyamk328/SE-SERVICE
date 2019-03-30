@@ -12,13 +12,18 @@ import lombok.Setter;
 public class User {
 
     private Long userId;
+    private String loginId;
     private String firstName;
     private String lastName;
     private String userName;
     private String password;
     private String email;
     private Long phoneNumber;
+    private String address;
+    private String city;
+    private String state;
 	private Boolean isActive;
+	private Boolean isLock;
 	private String createdBy;
 	private String modifiedBy;
 	private Long roleId;

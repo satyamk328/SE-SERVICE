@@ -1,20 +1,29 @@
 package com.erp.service;
 
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+import com.erp.model.Login;
 import com.erp.model.User;
 
 public interface UserService {
 
-	public User loginauthentication(User user) throws UnsupportedEncodingException;
+	public User loginauthentication(User user);
+
 	public User getUser(Long id);
 
-	public User addUser(User user);
+	public long addUser(User user);
 
-	public User updateUser(User user);
+	public long updateUser(User user);
 
-	public void deleteUser(Long id);
+	public long deleteUser(Long id);
 
 	public List<User> getAllUsers();
+
+	public long unLockUser(Long userId);
+
+	public long resetPassword(Long userId, String pass);
+
+	public long addLoginDetail(Login login);
+
+	public long updateLoginDetails(Long userId);
 }

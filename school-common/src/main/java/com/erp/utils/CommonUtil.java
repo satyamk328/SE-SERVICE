@@ -13,17 +13,24 @@ import java.util.Base64;
  */
 public class CommonUtil {
 
-	public static String encrypt(String data) throws UnsupportedEncodingException {
-		return Base64.getEncoder().encodeToString(data.getBytes("utf-8"));
+	public static String encrypt(String data) {
+		try {
+			return Base64.getEncoder().encodeToString(data.getBytes("utf-8"));
+		} catch (UnsupportedEncodingException e) {
+		}
+		return null;
 	}
 
-	public static String decrypt(String encryptedData) throws UnsupportedEncodingException {
+	public static String decrypt(String encryptedData) {
 		byte[] asBytes = Base64.getDecoder().decode(encryptedData);
-		return new String(asBytes, "utf-8");
+		try {
+			return new String(asBytes, "utf-8");
+		} catch (UnsupportedEncodingException e) {
+		}
+		return null;
 	}
-
 
 	public static void main(String[] args) throws Exception {
-		 System.out.println(encrypt("123"));
+		System.out.println(encrypt("123"));
 	}
 }

@@ -1,51 +1,82 @@
 package com.erp.service;
 
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.erp.dao.UserDaoImpl;
+import com.erp.model.Login;
 import com.erp.model.User;
 
-import lombok.Getter;
-import lombok.Setter;
-
 @Service(value = "userService")
-@Setter
-@Getter
 public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserDaoImpl userDao;
 
-	public User loginauthentication(User user) throws UnsupportedEncodingException {
-		return userDao.loginauthentication(user);
+	public User loginauthentication(User user) {
+		user = userDao.loginAuthentication(user);
+		Login login = new Login();
+		prepareLogin(login, user);
+		addLoginDetail(login);
+		return user;
 	}
+
+	private void prepareLogin(Login login, User user) {
+		login.setAddress(user.getAddress());
+		login.setCity(user.getCity());
+		login.setState(user.getState());
+		login.setUerName(user.getLoginId());
+		login.setUserId(user.getUserId());
+		login.setClientHost(null);
+		login.setClientIp(null);
+		login.setSessionId(null);
+	}
+
 	@Override
 	public User getUser(Long id) {
 		return userDao.getUser(id);
 	}
 
 	@Override
-	public User addUser(User user) {
+	public long addUser(User user) {
 		return userDao.addUser(user);
 	}
 
 	@Override
-	public User updateUser(User user) {
+	public long updateUser(User user) {
 		return userDao.updateUser(user);
 	}
 
 	@Override
-	public void deleteUser(Long id) {
-		userDao.deleteUser(id);
+	public long deleteUser(Long id) {
+		return userDao.deleteUser(id);
 	}
 
 	@Override
 	public List<User> getAllUsers() {
 		return userDao.findAllUser();
+	}
+
+	@Override
+	public long unLockUser(Long userId) {
+		return userDao.unLockUser(userId);
+	}
+
+	@Override
+	public long resetPassword(Long userId, String pass) {
+		return userDao.resetPassword(userId, pass);
+	}
+
+	@Override
+	public long addLoginDetail(Login login) {
+		return userDao.addLoginDetail(login);
+	}
+
+	@Override
+	public long updateLoginDetails(Long userId) {
+		return userDao.updateLoginDetails(userId);
 	}
 
 }
