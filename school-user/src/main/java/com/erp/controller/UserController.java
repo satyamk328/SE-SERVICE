@@ -105,7 +105,7 @@ public class UserController {
 		return new ResponseEntity<>(new RestResponse(row, status), HttpStatus.OK);
 	}
 
-	@PutMapping(value = "unLock/{userId}")
+	@PutMapping(value = "/unLock/{userId}")
 	public ResponseEntity<RestResponse<Object>> unLockUser(
 			@PathVariable(name = "userId", required = true) Long userId) {
 		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "User unLock Successfully");
