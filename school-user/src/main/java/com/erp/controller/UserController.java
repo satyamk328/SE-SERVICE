@@ -41,7 +41,7 @@ public class UserController {
 
 	private static int attempt;
 
-	@GetMapping("/users")
+	@GetMapping("/")
 	public ResponseEntity<RestResponse<List<User>>> getAllUsers() {
 		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "All Records Fetched Successfully");
 		List<User> users = userService.getAllUsers();
@@ -94,7 +94,7 @@ public class UserController {
 		return new ResponseEntity<>(new RestResponse(user, status), HttpStatus.OK);
 	}
 
-	@PostMapping(value = "/singup")
+	@PostMapping(value = "/")
 	public ResponseEntity<RestResponse<Object>> registration(@RequestBody(required = true) User user) {
 		log.info("call registration {}", user);
 		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "User Registered Successfully");
