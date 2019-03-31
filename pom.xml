@@ -120,7 +120,6 @@
 		</dependency>
 	</dependencies>
 	<modules>
-		<module>school-domain</module>
 		<module>school-common</module>
 		<module>school-security</module>
 		<module>school-user</module>

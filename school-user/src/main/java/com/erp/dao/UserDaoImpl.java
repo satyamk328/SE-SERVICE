@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -18,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.erp.extrator.UserRowMapper;
 import com.erp.model.Login;
 import com.erp.model.User;
-import com.erp.utils.CommonUtil;
 import com.erp.utils.DataUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -64,7 +62,7 @@ public class UserDaoImpl {
 	private String selectUserByIdQuery;
 
 	@Autowired
-	private JdbcTemplate jdbcTemplate;
+	private DataUtils dataUtils;
 
 	@Autowired
 	private NamedParameterJdbcTemplate jdbcTemplateObject;
@@ -72,7 +70,7 @@ public class UserDaoImpl {
 	@Transactional(readOnly = true)
 	public List<User> findAllUser() {
 		log.debug("Running insert query for addUser: {}", selectAllUserQuery);
-		return jdbcTemplate.query(selectAllUserQuery, new BeanPropertyRowMapper<User>(User.class));
+		return jdbcTemplateObject.query(selectAllUserQuery, new BeanPropertyRowMapper<User>(User.class));
 	}
 
 	@Transactional
@@ -99,10 +97,9 @@ public class UserDaoImpl {
 		parameters.addValue("loginId", user.getLoginId());
 		parameters.addValue("firstName", user.getFirstName());
 		parameters.addValue("lastName", user.getLastName());
-		parameters.addValue("password", CommonUtil.decrypt(user.getPassword()));
+		parameters.addValue("password", dataUtils.decrypt(user.getPassword()));
 		parameters.addValue("email", user.getEmail());
-		parameters.addValue("isactive", user.getIsActive());
-		parameters.addValue("isLock", user.getIsLock());
+		parameters.addValue("isActive", user.getIsActive());
 		parameters.addValue("address", user.getAddress());
 		parameters.addValue("city", user.getCity());
 		parameters.addValue("state", user.getState());
@@ -132,16 +129,16 @@ public class UserDaoImpl {
 	public long resetPassword(Long userId, String pass) {
 		log.debug("Running reset query for resetPassword {}", resetUserPasswordQuery);
 		final MapSqlParameterSource parameters = new MapSqlParameterSource();
-		parameters.addValue("password", CommonUtil.decrypt(pass));
+		parameters.addValue("password", dataUtils.decrypt(pass));
 		parameters.addValue("userId", userId);
-		return jdbcTemplate.update(resetUserPasswordQuery, parameters);
+		return jdbcTemplateObject.update(resetUserPasswordQuery, parameters);
 	}
 
 	@Transactional(readOnly = true)
 	public User loginAuthentication(String email) {
 		final MapSqlParameterSource parameters = new MapSqlParameterSource();
 		List<User> users = new ArrayList<>();
-		if (DataUtils.validatePhoneNumber(email)) {
+		if (dataUtils.validatePhoneNumber(email)) {
 			log.debug("Running insert query for authUser {}", selectUserDetailsByPhoneQuery);
 			parameters.addValue("phone", email);
 			users = jdbcTemplateObject.query(selectUserDetailsByPhoneQuery, parameters, new UserRowMapper());

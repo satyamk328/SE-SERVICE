@@ -40,7 +40,7 @@ public class RoleController {
 
 	@GetMapping("/{roleId}")
 	public ResponseEntity<RestResponse<Role>> getRole(@PathVariable(name = "roleId", required = true) Long roleId) {
-		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "Get Records Successfully");
+		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "Fetch Records Successfully");
 		Role role = roleService.getRole(roleId);
 		log.debug("Fetched record successfully");
 		return new ResponseEntity<>(new RestResponse(role, status), HttpStatus.OK);

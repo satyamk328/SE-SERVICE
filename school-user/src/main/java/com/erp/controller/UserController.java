@@ -1,6 +1,5 @@
 package com.erp.controller;
 
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,7 @@ import com.erp.model.User;
 import com.erp.service.UserService;
 import com.erp.spring.model.RestResponse;
 import com.erp.spring.model.RestStatus;
-import com.erp.utils.CommonUtil;
+import com.erp.utils.DataUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,6 +36,9 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	private DataUtils dataUtils;
+
 	private static int attempt;
 
 	@GetMapping("/users")
@@ -49,7 +51,7 @@ public class UserController {
 
 	@GetMapping("/{userId}")
 	public ResponseEntity<RestResponse<User>> getUser(@PathVariable(name = "userId", required = true) Long userId) {
-		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "Get Records Successfully");
+		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "Fetch Records Successfully");
 		User users = userService.getUser(userId);
 		log.debug("Fetched record successfully");
 		return new ResponseEntity<>(new RestResponse(users, status), HttpStatus.OK);
@@ -66,8 +68,12 @@ public class UserController {
 			status = new RestStatus<>(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Invalid username or password!.");
 			return new ResponseEntity<>(new RestResponse(user, status), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+		if (user.getIsLock()) {
+		    status = new RestStatus<>(HttpStatus.INTERNAL_SERVER_ERROR.toString(),"Your account has been lock. Please contact system administrator!");
+			return new ResponseEntity<>(new RestResponse(user, status), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 		userService.lockUser(user.getUserId(), 0, attempt);
-		if (!user.getPassword().equals(CommonUtil.encrypt(pass))) {
+		if (!user.getPassword().equals(dataUtils.encrypt(pass))) {
 			if (attempt != 0 && attempt < 3) {
 				status = new RestStatus<>(HttpStatus.INTERNAL_SERVER_ERROR.toString(),
 						"Invalid username and password. You have made count unsuccessful attempt(s). The maximum retry attempts allowed for login are 3. Password is case-sensitive."
@@ -76,10 +82,11 @@ public class UserController {
 			} else if (attempt >= 3) {
 				userService.lockUser(user.getUserId(), 1, attempt);
 				status = new RestStatus<>(HttpStatus.INTERNAL_SERVER_ERROR.toString(),
-						"You have been locked out for the day because of three invalid attempts during the day. You try to max number of attempt. You may unlock your username by contact system administrator!");
+						"You have been locked out for the day because of 3 invalid attempts during the day. You try to max number of attempt. You may unlock your username by contact system administrator!");
 				return new ResponseEntity<>(new RestResponse(user, status), HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
+		attempt = 0;
 		userService.lockUser(user.getUserId(), 0, 0);
 		Login login = new Login();
 		userService.prepareLogin(login, user);
