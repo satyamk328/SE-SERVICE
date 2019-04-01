@@ -116,7 +116,7 @@ public class UserController {
 		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "User update Successfully");
 		long i = userService.updateUser(user);
 		user.setUserId(userId);
-		return new ResponseEntity<>(new RestResponse<>(i, status), HttpStatus.OK);
+		return new ResponseEntity<>(new RestResponse<>(user, status), HttpStatus.OK);
 	}
 
 	@PutMapping(value = "/resetpassword/{userId}")
