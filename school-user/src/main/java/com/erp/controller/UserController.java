@@ -46,7 +46,7 @@ public class UserController {
 		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "All Records Fetched Successfully");
 		List<User> users = userService.getAllUsers();
 		log.debug("Fetched record successfully");
-		return new ResponseEntity<>(new RestResponse(users, status), HttpStatus.OK);
+		return new ResponseEntity<>(new RestResponse<>(users, status), HttpStatus.OK);
 	}
 
 	@GetMapping("/{userId}")
@@ -54,7 +54,7 @@ public class UserController {
 		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "Fetch Records Successfully");
 		User users = userService.getUser(userId);
 		log.debug("Fetched record successfully");
-		return new ResponseEntity<>(new RestResponse(users, status), HttpStatus.OK);
+		return new ResponseEntity<>(new RestResponse<>(users, status), HttpStatus.OK);
 	}
 
 	@PostMapping(value = "/login")
@@ -66,24 +66,24 @@ public class UserController {
 		User user = userService.loginAuthentication(email);
 		if (user == null) {
 			status = new RestStatus<>(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Invalid username or password!.");
-			return new ResponseEntity<>(new RestResponse(user, status), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(new RestResponse<>(user, status), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		if (user.getIsLock()) {
 		    status = new RestStatus<>(HttpStatus.INTERNAL_SERVER_ERROR.toString(),"Your account has been lock. Please contact system administrator!");
-			return new ResponseEntity<>(new RestResponse(user, status), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(new RestResponse<>(user, status), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		userService.lockUser(user.getUserId(), 0, attempt);
+		userService.lockUser(user.getUserId(), 1, attempt);
 		if (!user.getPassword().equals(dataUtils.encrypt(pass))) {
 			if (attempt != 0 && attempt < 3) {
 				status = new RestStatus<>(HttpStatus.INTERNAL_SERVER_ERROR.toString(),
 						"Invalid username and password. You have made count unsuccessful attempt(s). The maximum retry attempts allowed for login are 3. Password is case-sensitive."
 								.replaceAll("count", String.valueOf(attempt)));
-				return new ResponseEntity<>(new RestResponse(user, status), HttpStatus.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<>(new RestResponse<>(user, status), HttpStatus.INTERNAL_SERVER_ERROR);
 			} else if (attempt >= 3) {
-				userService.lockUser(user.getUserId(), 1, attempt);
+				userService.lockUser(user.getUserId(), 0, attempt);
 				status = new RestStatus<>(HttpStatus.INTERNAL_SERVER_ERROR.toString(),
 						"You have been locked out for the day because of 3 invalid attempts during the day. You try to max number of attempt. You may unlock your username by contact system administrator!");
-				return new ResponseEntity<>(new RestResponse(user, status), HttpStatus.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<>(new RestResponse<>(user, status), HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
 		attempt = 0;
@@ -91,7 +91,7 @@ public class UserController {
 		Login login = new Login();
 		userService.prepareLogin(login, user);
 		userService.addLoginDetail(login);
-		return new ResponseEntity<>(new RestResponse(user, status), HttpStatus.OK);
+		return new ResponseEntity<>(new RestResponse<>(user, status), HttpStatus.OK);
 	}
 
 	@PostMapping(value = "/")
@@ -101,11 +101,11 @@ public class UserController {
 		if (userService.loginAuthentication(user.getEmail()) != null
 				|| userService.loginAuthentication(String.valueOf(user.getPhoneNumber())) != null) {
 			status = new RestStatus<>(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Please enter valid Email/Phone");
-			return new ResponseEntity<>(new RestResponse(user, status), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(new RestResponse<>(user, status), HttpStatus.INTERNAL_SERVER_ERROR);
 		} else {
 			Long userId = userService.addUser(user);
 			user.setUserId(userId);
-			return new ResponseEntity<>(new RestResponse(user, status), HttpStatus.OK);
+			return new ResponseEntity<>(new RestResponse<>(user, status), HttpStatus.OK);
 		}
 	}
 
@@ -116,7 +116,7 @@ public class UserController {
 		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "User update Successfully");
 		long i = userService.updateUser(user);
 		user.setUserId(userId);
-		return new ResponseEntity<>(new RestResponse(i, status), HttpStatus.OK);
+		return new ResponseEntity<>(new RestResponse<>(i, status), HttpStatus.OK);
 	}
 
 	@PutMapping(value = "/resetpassword/{userId}")
@@ -125,7 +125,7 @@ public class UserController {
 			@RequestParam(name = "password", required = true) String pass) {
 		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "Password change Successfully");
 		Long row = userService.resetPassword(userId, pass);
-		return new ResponseEntity<>(new RestResponse(row, status), HttpStatus.OK);
+		return new ResponseEntity<>(new RestResponse<>(row, status), HttpStatus.OK);
 	}
 
 	@DeleteMapping(value = "/{userId}")
@@ -133,7 +133,7 @@ public class UserController {
 			@PathVariable(name = "userId", required = true) Long userId) {
 		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "Record deleted Successfully");
 		Long row = userService.deleteUser(userId);
-		return new ResponseEntity<>(new RestResponse(row, status), HttpStatus.OK);
+		return new ResponseEntity<>(new RestResponse<>(row, status), HttpStatus.OK);
 	}
 
 	@PutMapping(value = "/unLock/{userId}")
@@ -141,14 +141,14 @@ public class UserController {
 			@PathVariable(name = "userId", required = true) Long userId) {
 		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "User unLock Successfully");
 		Long row = userService.unLockUser(userId);
-		return new ResponseEntity<>(new RestResponse(row, status), HttpStatus.OK);
+		return new ResponseEntity<>(new RestResponse<>(row, status), HttpStatus.OK);
 	}
 
 	@PutMapping(value = "/logout/{userId}")
 	public ResponseEntity<RestResponse<Object>> logOut(@PathVariable(name = "userId", required = true) Long userId) {
 		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "User Logout Successfully");
 		long i = userService.updateLoginDetails(userId);
-		return new ResponseEntity<>(new RestResponse(i, status), HttpStatus.OK);
+		return new ResponseEntity<>(new RestResponse<>(i, status), HttpStatus.OK);
 	}
 
 }

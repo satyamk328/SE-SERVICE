@@ -35,7 +35,7 @@ public class RoleController {
 		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "All Records Fetched Successfully");
 		List<Role> roles = roleService.getAllRoles();
 		log.debug("Fetched record successfully");
-		return new ResponseEntity<>(new RestResponse(roles, status), HttpStatus.OK);
+		return new ResponseEntity<>(new RestResponse<>(roles, status), HttpStatus.OK);
 	}
 
 	@GetMapping("/{roleId}")
@@ -43,7 +43,7 @@ public class RoleController {
 		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "Fetch Records Successfully");
 		Role role = roleService.getRole(roleId);
 		log.debug("Fetched record successfully");
-		return new ResponseEntity<>(new RestResponse(role, status), HttpStatus.OK);
+		return new ResponseEntity<>(new RestResponse<>(role, status), HttpStatus.OK);
 	}
 
 	@PostMapping("/")
@@ -52,11 +52,11 @@ public class RoleController {
 		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "Role added Successfully");
 		if (roleService.getRole(role.getRoleName()) != null) {
 			status = new RestStatus<>(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Role Name is already exist");
-			return new ResponseEntity<>(new RestResponse(null, status), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(new RestResponse<>(null, status), HttpStatus.INTERNAL_SERVER_ERROR);
 		} else {
 			Long roleId = roleService.addRole(role);
 			role.setRoleId(roleId);
-			return new ResponseEntity<>(new RestResponse(role, status), HttpStatus.OK);
+			return new ResponseEntity<>(new RestResponse<>(role, status), HttpStatus.OK);
 		}
 	}
 
@@ -67,7 +67,7 @@ public class RoleController {
 		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "Role update Successfully");
 		if (roleService.checkRoleNameExists(roleId, role.getRoleName())) {
 			status = new RestStatus<>(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Role Name is already exist");
-			return new ResponseEntity<>(new RestResponse(null, status), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(new RestResponse<>(null, status), HttpStatus.INTERNAL_SERVER_ERROR);
 		} else {
 			long i = roleService.updateRole(role);
 			role.setRoleId(roleId);
