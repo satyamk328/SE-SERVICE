@@ -37,7 +37,7 @@ public class RolePrivilegeController {
 		return new ResponseEntity<>(new RestResponse<>(rolePrivilege, status), HttpStatus.OK);
 	}
 
-	@GetMapping("")
+	@GetMapping("/")
 	public ResponseEntity<RestResponse<List<RolePrivilege>>> getAllPrivileges() {
 		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(),
 				"Fetch privileges for a specific role Successfully");
@@ -46,11 +46,11 @@ public class RolePrivilegeController {
 		return new ResponseEntity<>(new RestResponse<>(rolePrivileges, status), HttpStatus.OK);
 	}
 
-	@PutMapping("")
-	public ResponseEntity<RestResponse<RolePrivilege>> updateAllPrivileges(@RequestBody RolePrivilege rolePrivileges) {
+	@PutMapping("/")
+	public ResponseEntity<RestResponse<Object>> updateAllPrivileges(@RequestBody RolePrivilege rolePrivileges) {
 		log.info("call updateAllPrivileges {}", rolePrivileges);
 		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "Role update Successfully");
 		int updateState = rolePrivilegeService.updateAllPrivileges(rolePrivileges);
-		return new ResponseEntity<>(new RestResponse<RolePrivilege>(rolePrivileges, status), HttpStatus.OK);
+		return new ResponseEntity<>(new RestResponse<>(updateState, status), HttpStatus.OK);
 	}
 }
