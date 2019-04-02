@@ -61,7 +61,7 @@ public class RoleController {
 	}
 
 	@PutMapping("/{roleId}")
-	public ResponseEntity<RestResponse<Role>> updateRole(@RequestBody(required = true) Role role,
+	public ResponseEntity<RestResponse<Object>> updateRole(@RequestBody(required = true) Role role,
 			@PathVariable("roleId") final Long roleId, Principal principal) {
 		log.info("call registration {}", role);
 		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "Role update Successfully");
@@ -71,15 +71,15 @@ public class RoleController {
 		} else {
 			long i = roleService.updateRole(role);
 			role.setRoleId(roleId);
-			return new ResponseEntity<>(new RestResponse(i, status), HttpStatus.OK);
+			return new ResponseEntity<>(new RestResponse<>(i, status), HttpStatus.OK);
 		}
 	}
 
 	@DeleteMapping("/{roleId}")
-	public ResponseEntity<RestResponse<Role>> deleteRole(@PathVariable("roleId") final Long roleId) {
+	public ResponseEntity<RestResponse<Object>> deleteRole(@PathVariable("roleId") final Long roleId) {
 		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "Record deleted Successfully");
 		Long row = roleService.deleteRole(roleId);
-		return new ResponseEntity<>(new RestResponse(row, status), HttpStatus.OK);
+		return new ResponseEntity<>(new RestResponse<>(row, status), HttpStatus.OK);
 	}
 
 }
