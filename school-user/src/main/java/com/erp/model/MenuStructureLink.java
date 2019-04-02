@@ -1,6 +1,5 @@
-package com.erp.service;
+package com.erp.model;
 
-import com.erp.model.MenuStructureTreeNodeVO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 

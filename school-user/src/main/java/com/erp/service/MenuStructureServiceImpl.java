@@ -14,10 +14,7 @@ import com.erp.dao.MenuStructureDao;
 import com.erp.model.MenuStructure;
 import com.erp.model.MenuStructureTreeNodeVO;
 
-import lombok.extern.slf4j.Slf4j;
-
 @Service
-@Slf4j
 public class MenuStructureServiceImpl implements MenuStructureService {
 	
 	@Autowired
