@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.erp.audit.dao.AuditDao;
+import com.erp.audit.dao.CentralizedLogDao;
 import com.erp.audit.model.CentralizedLogs;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,7 +32,7 @@ public class DBLoggingHandler {
 	private String applicationName;
 
 	@Autowired
-	private AuditDao auditDao;
+	private CentralizedLogDao auditDao;
 
 	public void handleException(final Throwable throwable, final Method method, final Object... obj) {
 

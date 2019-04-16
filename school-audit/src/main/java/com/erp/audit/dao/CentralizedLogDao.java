@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Repository
 @Slf4j
-public class AuditDao {
+public class CentralizedLogDao {
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;

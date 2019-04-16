@@ -20,7 +20,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>school-erp-service</groupId>
-			<artifactId>school-common</artifactId>
+			<artifactId>school-audit</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>

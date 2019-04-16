@@ -1,4 +1,4 @@
-package com.erp.dao;
+package com.erp.audit.dao;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.erp.model.JwtModel;
+import com.erp.audit.model.JwtModel;
 
 import lombok.extern.slf4j.Slf4j;
 
