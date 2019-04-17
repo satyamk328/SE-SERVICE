@@ -3,7 +3,7 @@ package com.erp.service;
 
 import java.util.Set;
 
-import com.erp.model.MenuStructureTreeNodeVO;
+import com.erp.user.model.MenuStructureTreeNodeVO;
 
 
 public abstract class MenuStructureProcessTreeNodesTemplate {

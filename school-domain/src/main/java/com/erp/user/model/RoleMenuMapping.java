@@ -1,4 +1,4 @@
-package com.erp.model;
+package com.erp.user.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

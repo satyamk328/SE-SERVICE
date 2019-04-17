@@ -2,7 +2,7 @@ package com.erp.service;
 
 import java.util.List;
 
-import com.erp.model.Role;
+import com.erp.user.model.Role;
 
 public interface RoleService {
 

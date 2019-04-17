@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.erp.dao.UserDaoImpl;
-import com.erp.model.Login;
-import com.erp.model.User;
+import com.erp.user.model.Login;
+import com.erp.user.model.User;
 
 @Service(value = "userService")
 public class UserServiceImpl implements UserService {

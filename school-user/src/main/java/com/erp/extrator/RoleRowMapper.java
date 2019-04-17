@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 import org.springframework.jdbc.core.RowMapper;
 
-import com.erp.model.Role;
+import com.erp.user.model.Role;
 
 public class RoleRowMapper implements RowMapper<Role> {
 

@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 import org.springframework.jdbc.core.RowMapper;
 
-import com.erp.model.User;
+import com.erp.user.model.User;
 
 /**
  * @author Satyam Kumar

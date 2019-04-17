@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.erp.dao.RolePrivilegeDao;
-import com.erp.model.RolePrivilege;
+import com.erp.user.model.RolePrivilege;
 
 @Service
 public class RolePrivilegeService {

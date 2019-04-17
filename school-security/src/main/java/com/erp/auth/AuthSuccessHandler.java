@@ -18,10 +18,10 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 import org.springframework.stereotype.Component;
 
 import com.erp.audit.service.DBLoggingHandler;
-import com.erp.model.ProfileVO;
 import com.erp.service.TokenAuthenticationService;
 import com.erp.spring.model.RestResponse;
 import com.erp.spring.model.RestStatus;
+import com.erp.user.model.ProfileVO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
@@ -59,7 +59,7 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
 
 			ProfileVO profile = new ProfileVO();
 			
-			profile.setUser(user.getUsername());
+			//profile.setUserContext(user);
 			profile.setStatus("SUCCESS");
 			profile.setType(user.getAuthorities().toArray()[0].toString());
 

@@ -11,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.erp.dao.MenuStructureDao;
-import com.erp.model.MenuStructure;
-import com.erp.model.MenuStructureTreeNodeVO;
+import com.erp.user.model.MenuStructure;
+import com.erp.user.model.MenuStructureTreeNodeVO;
 
 @Service
 public class MenuStructureServiceImpl implements MenuStructureService {

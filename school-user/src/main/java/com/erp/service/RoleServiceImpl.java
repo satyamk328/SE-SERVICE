@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.erp.dao.RoleDaoImpl;
-import com.erp.model.Role;
+import com.erp.user.model.Role;
 
 @Service(value = "roleService")
 public class RoleServiceImpl implements RoleService {

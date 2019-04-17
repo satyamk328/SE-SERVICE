@@ -2,8 +2,8 @@ package com.erp.service;
 
 import java.util.List;
 
-import com.erp.model.Login;
-import com.erp.model.User;
+import com.erp.user.model.Login;
+import com.erp.user.model.User;
 
 public interface UserService {
 

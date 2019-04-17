@@ -15,8 +15,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.erp.extrator.UserRowMapper;
-import com.erp.model.Login;
-import com.erp.model.User;
+import com.erp.user.model.Login;
+import com.erp.user.model.User;
 import com.erp.utils.DataUtils;
 
 import lombok.extern.slf4j.Slf4j;
