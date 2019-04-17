@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.erp.service.UserService;
 import com.erp.spring.model.RestResponse;
 import com.erp.spring.model.RestStatus;
 import com.erp.user.model.Login;
 import com.erp.user.model.User;
+import com.erp.user.service.UserService;
 import com.erp.utils.DataUtils;
 
 import lombok.extern.slf4j.Slf4j;

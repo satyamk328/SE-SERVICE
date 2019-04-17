@@ -1,4 +1,4 @@
-package com.erp.service;
+package com.erp.user.service;
 
 import java.util.List;
 

@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.erp.service.RolePrivilegeService;
 import com.erp.spring.model.RestResponse;
 import com.erp.spring.model.RestStatus;
 import com.erp.user.model.RolePrivilege;
+import com.erp.user.service.RolePrivilegeService;
 
 import lombok.extern.slf4j.Slf4j;
 
