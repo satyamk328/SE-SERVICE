@@ -8,13 +8,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import com.erp.audit.dao.UserJwtTokenDao;
+import com.erp.audit.model.JwtModel;
 import com.erp.auth.SessionTracker;
 
 import io.jsonwebtoken.Claims;
@@ -35,34 +35,52 @@ public class TokenAuthenticationService {
 	private static final String JWT_SIGNATURE_MISMATCH = "Jwt Signature mismatch";
 	private static final String ILLEGAL_ARGUEMENT_EXCEPTION = "Illegal Arguement Exception";
 	private static long expirationTime = 30; // 30 min
-	public static final String SECRET = "ThisIsASecret";
+	public static final String SECRET = "jwt$TokenKey2";
 	public static final String BEARER_TOKEN_PREFIX = "Bearer";
 	public static final String AUTHORIZATION_HEADER = "Authorization";
 
 	@Autowired
 	private SessionTracker sessionTracker;
 
+	@Autowired
+	private UserJwtTokenDao jwtDao;
+
 	public String addAuthentication(final HttpServletResponse res, final String username,
 			final HttpServletRequest req) {
+		Long userId = null;// consumerDao.getIdByName(username);
+
 		final String sessionId = req.getSession().getId();
 		log.debug("Session Id getting saved is:{} ", sessionId);
 		log.debug("Adding SessionId to Jwt for SessionId = {}", sessionId);
 		log.debug("res {}", res);
+
 		final String JWT = Jwts.builder().setSubject(username).setId(sessionId)
 				.setExpiration(new Date(System.currentTimeMillis() + (expirationTime * 60 * 1000)))
 				.signWith(SignatureAlgorithm.HS512, SECRET).compact();
 		sessionTracker.map.put(sessionId, req.getSession());
+
+		final JwtModel jwtModel = new JwtModel();
+		jwtModel.setToken(BEARER_TOKEN_PREFIX + " " + JWT);
+		jwtModel.setIssueTime(new Date());
+		jwtModel.setConsumerId(userId);
+		jwtModel.setExpirationTime(new Date(jwtModel.getIssueTime().getTime() + (expirationTime * 60 * 1000)));
+		jwtModel.setValid(true);
+
+		jwtDao.insertJwt(jwtModel);
+
 		return BEARER_TOKEN_PREFIX + " " + JWT;
 	}
 
 	public Authentication getAuthentication(final HttpServletRequest request) {
-		final String token = request.getHeader(AUTHORIZATION_HEADER);
+		String token = request.getHeader(AUTHORIZATION_HEADER);
+
 		if (token != null && token.contains(BEARER_TOKEN_PREFIX)) {
+			token = getAuthenticationToken(token);
 			// parse the token.
 			Claims claims;
 			try {
-				claims = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token.replace(BEARER_TOKEN_PREFIX, "")).getBody();
-
+				claims = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token.replace(BEARER_TOKEN_PREFIX, ""))
+						.getBody();
 			} catch (final ExpiredJwtException e) {
 				log.info(JWT_TOKEN_EXPIRED, e);
 				return null;
@@ -95,51 +113,52 @@ public class TokenAuthenticationService {
 		return null;
 	}
 
-	public String getSessionId(final HttpServletRequest request) {
-		final String token = request.getHeader(AUTHORIZATION_HEADER);
-		return Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token.replace(BEARER_TOKEN_PREFIX, "")).getBody().getId();
-
-	}
-
-	public String checkAuthentication(final String token) {
-
-		if (token != null && token.contains(BEARER_TOKEN_PREFIX)) {
-			// parse the token.
-			Claims cliams;
-
-			try {
-				cliams = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token.replace(BEARER_TOKEN_PREFIX, "")).getBody();
-			} catch (final ExpiredJwtException e) {
-				log.info(JWT_TOKEN_EXPIRED, e);
-				return JWT_TOKEN_EXPIRED;
-			} catch (final UnsupportedJwtException e) {
-				log.info(UNSUPPORTED_JWT_TOKEN, e);
-				return UNSUPPORTED_JWT_TOKEN;
-			} catch (final MalformedJwtException e) {
-				log.info(MALFORMED_JWT_TOKEN, e);
-				return MALFORMED_JWT_TOKEN;
-			} catch (final SignatureException e) {
-				log.info(JWT_SIGNATURE_MISMATCH, e);
-				return JWT_SIGNATURE_MISMATCH;
-			} catch (final IllegalArgumentException e) {
-				log.info(ILLEGAL_ARGUEMENT_EXCEPTION, e);
-				return ILLEGAL_ARGUEMENT_EXCEPTION;
+	public String getAuthenticationToken(String token) {
+		final String[] tokenArray = token.split(",");
+		if (tokenArray.length > 1) {
+			// In case of Data Power the second token will belong to ssc.
+			token = tokenArray[1];
+			if (!token.contains(BEARER_TOKEN_PREFIX)) {
+				token = BEARER_TOKEN_PREFIX + " " + token;
 			}
-
-			final String sessionId = cliams.getId();
-
-			log.debug("Getting Authenticate for SessionId = {}", sessionId);
-			final HttpSession session = sessionTracker.map.get(sessionId);
-
-			log.debug("Getting Authenticate for the Session ={} ", session);
-			if (session == null) {
-
-				log.info(JWT_TOKEN_EXPIRED);
-				return JWT_TOKEN_EXPIRED;
-			}
-			return "Good and working Jwt token";
 		}
-		return "Not valid jwt formed token";
+		return token;
+	}
+	
+	public String getUserName(final HttpServletRequest req) {
+        String user = null;
+        final String token = req.getHeader(AUTHORIZATION_HEADER);
+        if (token != null && token.contains(BEARER_TOKEN_PREFIX)) {
+            try {
+                user = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token.replace(BEARER_TOKEN_PREFIX, ""))
+                        .getBody().getSubject();
+            } catch (final Exception e) {
+                log.debug("Error parsing Jwt Token", e);
+            }
+        }
+
+        return user;
+
+    }
+
+
+	public Long getUserId(final HttpServletRequest req) {
+		String userId = null;
+		final String token = req.getHeader(AUTHORIZATION_HEADER);
+		if (token != null && token.contains(BEARER_TOKEN_PREFIX)) {
+			try {
+				userId = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token.replace(BEARER_TOKEN_PREFIX, ""))
+						.getBody().getId();
+			} catch (final Exception e) {
+				log.debug("Error parsing Jwt Token", e);
+			}
+		}
+
+		if (userId == null) {
+			return null;
+		} else {
+			return Long.parseLong(userId);
+		}
 	}
 
 	public static long getExpirationTime() {

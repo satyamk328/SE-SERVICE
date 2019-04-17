@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Repository
 @Slf4j
-public class UserTokenDao {
+public class UserJwtTokenDao {
 
 	 /** The jdbc template object. */
     private NamedParameterJdbcTemplate jdbcTemplateObject;

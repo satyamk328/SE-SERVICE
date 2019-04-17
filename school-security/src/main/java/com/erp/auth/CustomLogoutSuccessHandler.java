@@ -12,7 +12,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import com.erp.audit.dao.UserTokenDao;
+import com.erp.audit.dao.UserJwtTokenDao;
+import com.erp.audit.model.JwtModel;
 import com.erp.service.TokenAuthenticationService;
 import com.erp.spring.model.RestResponse;
 import com.erp.spring.model.RestStatus;
@@ -28,10 +29,10 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
 	SessionTracker sessionTracker;
 
     @Autowired
-    private UserTokenDao jwtDao;
+    private UserJwtTokenDao jwtDao;
     
 	@Autowired
-	TokenAuthenticationService authenticationService;
+	TokenAuthenticationService tokenService;
 
 	public static final ObjectMapper mapper = new ObjectMapper();
 
@@ -39,45 +40,41 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
 	public void onLogoutSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
 			Authentication authentication) throws IOException, ServletException {
 		try {
-			sessionTracker.removeHttpSession(authenticationService.getSessionId(httpServletRequest));
-			 String token = httpServletRequest.getHeader(TokenAuthenticationService.AUTHORIZATION_HEADER);
-	            if (token != null && token.contains(TokenAuthenticationService.BEARER_TOKEN_PREFIX)) {
-	                token = authenticationService.getAuthenticationToken(token);
-	            	ChannelDetails channelDetails = channelService.getChannelHeaderInfo();
+            String token = httpServletRequest.getHeader(TokenAuthenticationService.AUTHORIZATION_HEADER);
+            if (token != null && token.contains(TokenAuthenticationService.BEARER_TOKEN_PREFIX)) {
+                token = tokenService.getAuthenticationToken(token);
+                //sessionTracker.removeHttpSession(tokenService.getSessionId(httpServletRequest));
+                
+                final JwtModel jwtModel = new JwtModel();
+                jwtModel.setToken(token);
+                jwtModel.setValid(false);
+                jwtDao.updateJwtIsValid(jwtModel);
+            }
 
-	                final JwtModel jwtModel = new JwtModel();
-	                jwtModel.setToken(token);
-	                jwtModel.setValid(false);
-	                jwtModel.setChannelName(channelDetails.getChannelName());
-	                jwtModel.setChannelType(channelDetails.getChannelType());
-	                jwtDao.updateJwtIsValid(jwtModel);
-	                
-	                logEvent(httpServletRequest,true);
-	            }
-	            
-		} catch (Exception e1) {
-		    log.error("Exception {}", e1);
-		}
-		if (authentication != null && authentication.getDetails() != null) {
-			try {
-				sessionTracker.getHttpSession(authenticationService.getSessionId(httpServletRequest)).invalidate();
-				sessionTracker.removeHttpSession(authenticationService.getSessionId(httpServletRequest));
-				log.info("User Successfully Logout");
-			} catch (Exception e) {
-			    log.error("Exception {}", e);
-				httpServletRequest.getSession().invalidate();
-			}
-		}
+            if (authentication != null && authentication.getDetails() != null) {
+            	try {
+            		httpServletRequest.getSession().invalidate();
+    				//sessionTracker.getHttpSession(tokenService.getSessionId(httpServletRequest)).invalidate();
+    				//sessionTracker.removeHttpSession(tokenService.getSessionId(httpServletRequest));
+    				log.info("User Successfully Logout");
+    			} catch (Exception e) {
+    			    log.error("Exception {}", e);
+    				httpServletRequest.getSession().invalidate();
+    			}
+            }
+            
+        } catch (final Exception e) {
+            httpServletRequest.getSession().invalidate();
+        }
 
-		PrintWriter writer = httpServletResponse.getWriter();
-		RestResponse<String> responseObj = new RestResponse<>(null,
-				new RestStatus<>("200", "User Successfully Logout"));
-		String result = mapper.writeValueAsString(responseObj);
-		log.info(result);
-		writer.write(mapper.writeValueAsString(responseObj));
-		writer.flush();
-
-		httpServletResponse.setStatus(HttpServletResponse.SC_OK);
+        final PrintWriter writer = httpServletResponse.getWriter();
+        final RestResponse<String> responseObj = new RestResponse<>(null,
+                new RestStatus<>("200", "User Successfully Logout"));
+        final String result = mapper.writeValueAsString(responseObj);
+        log.info(result);
+        writer.write(result);
+        writer.flush();
+        httpServletResponse.setStatus(HttpServletResponse.SC_OK);
 	}
 
 }
