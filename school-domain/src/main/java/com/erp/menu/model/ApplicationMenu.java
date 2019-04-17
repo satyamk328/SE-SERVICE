@@ -1,4 +1,4 @@
-package com.erp.user.model;
+package com.erp.menu.model;
 
 public class ApplicationMenu {
 

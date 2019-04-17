@@ -2,7 +2,7 @@ package com.erp.dao;
 
 import java.util.List;
 
-import com.erp.user.model.MenuStructure;
+import com.erp.menu.model.MenuStructure;
 
 public interface MenuStructureDao {
 	

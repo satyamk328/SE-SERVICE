@@ -2,6 +2,7 @@ package com.erp.user.model;
 
 import java.util.List;
 
+import com.erp.menu.model.ApplicationRoleMenuVO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 

@@ -2,6 +2,8 @@ package com.erp.user.model;
 
 import java.util.List;
 
+import com.erp.menu.model.Menu;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

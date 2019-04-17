@@ -1,7 +1,8 @@
-package com.erp.user.model;
+package com.erp.menu.model;
 
 import java.util.List;
 
+import com.erp.user.model.RoleMenuMapping;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 

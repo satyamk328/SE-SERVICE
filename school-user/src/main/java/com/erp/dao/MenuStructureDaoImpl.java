@@ -8,7 +8,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.erp.user.model.MenuStructure;
+import com.erp.menu.model.MenuStructure;
 
 import lombok.extern.slf4j.Slf4j;
 

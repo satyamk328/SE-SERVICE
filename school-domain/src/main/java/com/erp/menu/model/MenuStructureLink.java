@@ -1,4 +1,4 @@
-package com.erp.user.model;
+package com.erp.menu.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;

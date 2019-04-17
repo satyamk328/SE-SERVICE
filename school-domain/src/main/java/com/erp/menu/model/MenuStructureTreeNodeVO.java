@@ -1,4 +1,4 @@
-package com.erp.user.model;
+package com.erp.menu.model;
 
 import java.util.Set;
 import java.util.TreeSet;
