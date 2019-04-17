@@ -1,10 +1,18 @@
 package com.erp.user.model;
 
-import java.util.Collection;
-import java.util.List;
+import java.sql.Date;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,61 +23,48 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class User implements UserDetails{
+@Entity
+@Table(name = "user_master")
+public class User {
 
-    private Long userId;
-    private String loginId;
-    private String firstName;
-    private String lastName;
-    private String password;
-    private String email;
-    private Long phoneNumber;
-    private String address;
-    private String city;
-    private String state;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "UserId", nullable = false, unique = true)
+	private Long userId;
+	@Column(name="FirstName")
+	private String firstName;
+	@Column(name="LastName")
+	private String lastName;
+	@Column(name="Password")
+	private String password;
+	@Column(name="Email")
+	private String email;
+	@Column(name="PhoneNumber")
+	private Long phoneNumber;
+	@Column(name="Address")
+	private String address;
+	@Column(name="City")
+	private String city;
+	@Column(name="State")
+	private String state;
+	@Column(name="Country")
+	private String country;
+	@Column(name="IsActive")
 	private Boolean isActive;
+	@Column(name="IsLock")
 	private Boolean isLock;
+	@Column(name="CreatedBy")
 	private String createdBy;
+	@Column(name="DateCreated")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dateCreated;
+	@Column(name="ModifiedBy")
 	private String modifiedBy;
-	private Long roleId;
-	private String description;
-	
-	 private List<Role> role;
+	@Column(name="DateModified")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dateModified;
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "RoleId",nullable = false)
+	private Role role;
 
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getUsername() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean isAccountNonExpired() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isAccountNonLocked() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isCredentialsNonExpired() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isEnabled() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	
 }

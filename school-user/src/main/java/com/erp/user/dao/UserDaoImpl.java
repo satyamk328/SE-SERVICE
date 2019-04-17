@@ -94,7 +94,7 @@ public class UserDaoImpl {
 	public long updateUser(User user) {
 		log.debug("Running upadte query for updateUser {}", updateUserDetails);
 		final MapSqlParameterSource parameters = new MapSqlParameterSource();
-		parameters.addValue("loginId", user.getLoginId());
+		//parameters.addValue("loginId", user.getLoginId());
 		parameters.addValue("firstName", user.getFirstName());
 		parameters.addValue("lastName", user.getLastName());
 		parameters.addValue("password", dataUtils.decrypt(user.getPassword()));
@@ -104,7 +104,7 @@ public class UserDaoImpl {
 		parameters.addValue("city", user.getCity());
 		parameters.addValue("state", user.getState());
 		parameters.addValue("phoneNumber", user.getPhoneNumber());
-		parameters.addValue("roleId", user.getRoleId());
+		//parameters.addValue("roleId", user.getRoleId());
 		parameters.addValue("userId", user.getUserId());
 		return jdbcTemplateObject.update(updateUserDetails, parameters);
 	}

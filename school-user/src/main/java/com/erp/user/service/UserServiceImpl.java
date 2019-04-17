@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		if (user == null) {
 			new UsernameNotFoundException("User not found with username or email : " + username);
 		}
-		 user.setRole(Arrays.asList(new Role(Roles.USER.toString())));
+		// user.setRole(Arrays.asList(new Role(Roles.USER.toString())));
 		return null;
 	}
 
@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		login.setAddress(user.getAddress());
 		login.setCity(user.getCity());
 		login.setState(user.getState());
-		login.setUserName(user.getLoginId());
+		//login.setUserName(user.getLoginId());
 		login.setUserId(user.getUserId());
 		login.setClientHost("localhost");
 		login.setClientIp("127.0.0.1");
