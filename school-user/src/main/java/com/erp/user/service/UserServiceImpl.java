@@ -1,19 +1,35 @@
 package com.erp.user.service;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.erp.user.dao.UserDaoImpl;
+import com.erp.user.enums.Roles;
 import com.erp.user.model.Login;
+import com.erp.user.model.Role;
 import com.erp.user.model.User;
 
 @Service(value = "userService")
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Autowired
 	private UserDaoImpl userDao;
+
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		User user = userDao.loginAuthentication(username);
+		if (user == null) {
+			new UsernameNotFoundException("User not found with username or email : " + username);
+		}
+		 user.setRole(Arrays.asList(new Role(Roles.USER.toString())));
+		return null;
+	}
 
 	@Override
 	public User loginAuthentication(String email) {
@@ -81,4 +97,5 @@ public class UserServiceImpl implements UserService {
 	public long lockUser(long userId, int isLock, int attempt) {
 		return userDao.lockUser(userId, isLock, attempt);
 	}
+
 }

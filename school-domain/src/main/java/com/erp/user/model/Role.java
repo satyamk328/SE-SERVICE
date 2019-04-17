@@ -10,10 +10,14 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Role {
-	
+
 	private Long roleId;
 	private String roleName;
-    private String description;
-    private Boolean isActive;
+	private String description;
+	private Boolean isActive;
+
+	public Role(String roleName) {
+		this.roleName = roleName;
+	}
 
 }

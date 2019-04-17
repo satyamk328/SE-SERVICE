@@ -70,7 +70,7 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
 			profile.setTokenType(jwt.split(" ")[0]);
 
 			RestResponse<ProfileVO> responseObj = new RestResponse<ProfileVO>(profile,
-					new RestStatus("200", "Login Success"));
+					new RestStatus<>("200", "Login Success"));
 			String result = mapper.writeValueAsString(profile);
 			log.info("Login Response : " + result);
 			writer.write(mapper.writeValueAsString(responseObj));

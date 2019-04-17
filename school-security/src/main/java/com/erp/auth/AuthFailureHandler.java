@@ -8,14 +8,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
 
-import com.erp.audit.dao.CentralizedLogDao;
 import com.erp.exception.UnAuthorizedException;
 import com.erp.exception.UnReachableLdapServerException;
 import com.erp.spring.model.RestResponse;

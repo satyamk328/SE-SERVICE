@@ -17,11 +17,6 @@
 	<dependencies>
 		<dependency>
 			<groupId>school-erp-service</groupId>
-			<artifactId>school-common</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>school-erp-service</groupId>
 			<artifactId>school-security</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
