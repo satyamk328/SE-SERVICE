@@ -1,4 +1,4 @@
-/*package com.erp.controller;
+package com.erp.controller;
 
 import java.util.List;
 
@@ -17,17 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.erp.spring.model.RestResponse;
 import com.erp.spring.model.RestStatus;
-import com.erp.user.model.Login;
 import com.erp.user.model.User;
 import com.erp.user.service.UserService;
-import com.erp.utils.DataUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
-*//**
- * @author Satyam Kumar
- *
- *//*
 @RestController
 @RequestMapping(value = "/api/v0/auth")
 @Slf4j
@@ -47,22 +41,20 @@ public class UserController {
 	@GetMapping("/{userId}")
 	public ResponseEntity<RestResponse<User>> getUser(@PathVariable(name = "userId", required = true) Long userId) {
 		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "Fetch Records Successfully");
-		User users = userService.getUser(userId);
+		User users = userService.getUserDetailsById(userId);
 		log.debug("Fetched record successfully");
 		return new ResponseEntity<>(new RestResponse<>(users, status), HttpStatus.OK);
 	}
 
-	
 	@PostMapping(value = "/")
 	public ResponseEntity<RestResponse<Object>> registration(@RequestBody(required = true) User user) {
 		log.info("call registration {}", user);
 		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "User Registered Successfully");
-		if (userService.loginAuthentication(user.getEmail()) != null
-				|| userService.loginAuthentication(String.valueOf(user.getPhoneNumber())) != null) {
+		if (userService.existsByEmail(user.getEmail()) != null || userService.existsByPhone(user.getPhoneNumber())) {
 			status = new RestStatus<>(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Please enter valid Email/Phone");
 			return new ResponseEntity<>(new RestResponse<>(user, status), HttpStatus.INTERNAL_SERVER_ERROR);
 		} else {
-			Long userId = userService.addUser(user);
+			Long userId = userService.saveUser(user);
 			user.setUserId(userId);
 			return new ResponseEntity<>(new RestResponse<>(user, status), HttpStatus.OK);
 		}
@@ -73,7 +65,7 @@ public class UserController {
 			@PathVariable(name = "userId", required = true) Long userId, @RequestBody(required = true) User user) {
 		log.info("call registration {}", user);
 		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "User update Successfully");
-		long i = userService.updateUser(user);
+		user = userService.updateUserDetails(userId, user);
 		user.setUserId(userId);
 		return new ResponseEntity<>(new RestResponse<>(user, status), HttpStatus.OK);
 	}
@@ -83,7 +75,7 @@ public class UserController {
 			@PathVariable(name = "userId", required = true) Long userId,
 			@RequestParam(name = "password", required = true) String pass) {
 		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "Password change Successfully");
-		Long row = userService.resetPassword(userId, pass);
+		int row = userService.resetPassword(userId, pass);
 		return new ResponseEntity<>(new RestResponse<>(row, status), HttpStatus.OK);
 	}
 
@@ -91,24 +83,16 @@ public class UserController {
 	public ResponseEntity<RestResponse<Object>> deleteUser(
 			@PathVariable(name = "userId", required = true) Long userId) {
 		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "Record deleted Successfully");
-		Long row = userService.deleteUser(userId);
-		return new ResponseEntity<>(new RestResponse<>(row, status), HttpStatus.OK);
+		boolean flag = userService.deleteUser(userId);
+		return new ResponseEntity<>(new RestResponse<>(flag, status), HttpStatus.OK);
 	}
 
 	@PutMapping(value = "/unLock/{userId}")
 	public ResponseEntity<RestResponse<Object>> unLockUser(
 			@PathVariable(name = "userId", required = true) Long userId) {
 		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "User unLock Successfully");
-		Long row = userService.unLockUser(userId);
+		int row = userService.unLockUser(userId);
 		return new ResponseEntity<>(new RestResponse<>(row, status), HttpStatus.OK);
 	}
 
-	@PutMapping(value = "/logout/{userId}")
-	public ResponseEntity<RestResponse<Object>> logOut(@PathVariable(name = "userId", required = true) Long userId) {
-		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "User Logout Successfully");
-		long i = userService.updateLoginDetails(userId);
-		return new ResponseEntity<>(new RestResponse<>(i, status), HttpStatus.OK);
-	}
-
 }
-*/

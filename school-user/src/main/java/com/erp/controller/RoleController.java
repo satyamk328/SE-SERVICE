@@ -1,4 +1,4 @@
-/*package com.erp.controller;
+package com.erp.controller;
 
 import java.security.Principal;
 import java.util.List;
@@ -69,18 +69,17 @@ public class RoleController {
 			status = new RestStatus<>(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Role Name is already exist");
 			return new ResponseEntity<>(new RestResponse<>(null, status), HttpStatus.INTERNAL_SERVER_ERROR);
 		} else {
-			long i = roleService.updateRole(role);
+			roleService.updateRole(role);
 			role.setRoleId(roleId);
-			return new ResponseEntity<>(new RestResponse<>(i, status), HttpStatus.OK);
+			return new ResponseEntity<>(new RestResponse<>(null, status), HttpStatus.OK);
 		}
 	}
 
 	@DeleteMapping("/{roleId}")
 	public ResponseEntity<RestResponse<Object>> deleteRole(@PathVariable("roleId") final Long roleId) {
 		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "Record deleted Successfully");
-		Long row = roleService.deleteRole(roleId);
-		return new ResponseEntity<>(new RestResponse<>(row, status), HttpStatus.OK);
+		roleService.deleteRole(roleId);
+		return new ResponseEntity<>(new RestResponse<>(null, status), HttpStatus.OK);
 	}
 
 }
-*/
