@@ -1,6 +1,5 @@
 package com.erp.user.model;
 
-import java.sql.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -11,8 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -39,16 +36,7 @@ public class Role {
 	private Boolean isActive;
 	@Column(name="IsAdmin")
 	private Boolean isAdmin;
-	@Column(name="CreatedBy")
-	private String createdBy;
-	@Column(name="DateCreated")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date dateCreated;
-	@Column(name="ModifiedBy")
-	private String modifiedBy;
-	@Column(name="DateModified")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date dateModified;
-	@OneToMany(cascade = CascadeType.ALL, mappedBy="roles")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy="role")
     private List<User> users;
+	
 }

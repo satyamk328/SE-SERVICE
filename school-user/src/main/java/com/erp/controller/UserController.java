@@ -1,4 +1,4 @@
-package com.erp.controller;
+/*package com.erp.controller;
 
 import java.util.List;
 
@@ -24,10 +24,10 @@ import com.erp.utils.DataUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
+*//**
  * @author Satyam Kumar
  *
- */
+ *//*
 @RestController
 @RequestMapping(value = "/api/v0/auth")
 @Slf4j
@@ -35,11 +35,6 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
-
-	@Autowired
-	private DataUtils dataUtils;
-
-	private static int attempt;
 
 	@GetMapping("/")
 	public ResponseEntity<RestResponse<List<User>>> getAllUsers() {
@@ -57,43 +52,7 @@ public class UserController {
 		return new ResponseEntity<>(new RestResponse<>(users, status), HttpStatus.OK);
 	}
 
-	@PostMapping(value = "/login")
-	public ResponseEntity<RestResponse<Object>> loginAuthentication(
-			@RequestParam(name = "email", required = true) String email,
-			@RequestParam(name = "password", required = true) String pass) {
-		RestStatus<String> status = new RestStatus<>(HttpStatus.OK.toString(), "Login Successfully");
-		attempt++;
-		User user = userService.loginAuthentication(email);
-		if (user == null) {
-			status = new RestStatus<>(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Invalid username or password!.");
-			return new ResponseEntity<>(new RestResponse<>(user, status), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		if (user.getIsLock()) {
-		    status = new RestStatus<>(HttpStatus.INTERNAL_SERVER_ERROR.toString(),"Your account has been lock. Please contact system administrator!");
-			return new ResponseEntity<>(new RestResponse<>(user, status), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		userService.lockUser(user.getUserId(), 1, attempt);
-		if (!user.getPassword().equals(dataUtils.encrypt(pass))) {
-			if (attempt != 0 && attempt < 3) {
-				status = new RestStatus<>(HttpStatus.INTERNAL_SERVER_ERROR.toString(),
-						"Invalid username and password. You have made count unsuccessful attempt(s). The maximum retry attempts allowed for login are 3. Password is case-sensitive."
-								.replaceAll("count", String.valueOf(attempt)));
-				return new ResponseEntity<>(new RestResponse<>(user, status), HttpStatus.INTERNAL_SERVER_ERROR);
-			} else if (attempt >= 3) {
-				userService.lockUser(user.getUserId(), 0, attempt);
-				status = new RestStatus<>(HttpStatus.INTERNAL_SERVER_ERROR.toString(),
-						"You have been locked out for the day because of 3 invalid attempts during the day. You try to max number of attempt. You may unlock your username by contact system administrator!");
-				return new ResponseEntity<>(new RestResponse<>(user, status), HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-		}
-		attempt = 0;
-		userService.lockUser(user.getUserId(), 0, 0);
-		Login login = new Login();
-		userService.prepareLogin(login, user);
-		userService.addLoginDetail(login);
-		return new ResponseEntity<>(new RestResponse<>(user, status), HttpStatus.OK);
-	}
-
+	
 	@PostMapping(value = "/")
 	public ResponseEntity<RestResponse<Object>> registration(@RequestBody(required = true) User user) {
 		log.info("call registration {}", user);
@@ -152,3 +111,4 @@ public class UserController {
 	}
 
 }
+*/

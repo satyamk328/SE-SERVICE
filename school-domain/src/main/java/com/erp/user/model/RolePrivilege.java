@@ -1,8 +1,11 @@
 package com.erp.user.model;
 
-import java.util.List;
-
-import com.erp.menu.model.Menu;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,11 +16,17 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "privilege_master")
 public class RolePrivilege {
-	private Long roleMenuId;
-	private Long roleId;
-	private Long roleName;
-	private Long description;
 	
-	private List<Menu> menuData;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "LoginId", nullable = false, unique = true)
+	private Long privilegeId;
+	@Column(name = "PrivilegeName")
+	private String privilegeName;
+	@Column(name = "Description")
+	private String description;
+	
 }

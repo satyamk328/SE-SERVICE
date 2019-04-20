@@ -14,9 +14,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import com.erp.audit.dao.UserJwtTokenDao;
-import com.erp.audit.model.JwtModel;
 import com.erp.auth.SessionTracker;
 import com.erp.auth.model.UserPrincipal;
+import com.erp.user.model.JwtModel;
 import com.erp.user.service.UserService;
 
 import io.jsonwebtoken.Claims;

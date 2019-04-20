@@ -1,12 +1,9 @@
 package com.erp.audit.dao;
 
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.erp.audit.model.ServiceApiAuditLog;
 
@@ -17,16 +14,11 @@ import lombok.extern.slf4j.Slf4j;
 public class ServiceApiResponseLogDao {
 
 	@Autowired
-	private JdbcTemplate jdbcTemplate;
-	
+	private SessionFactory sessionFactory;
 
-    @Value("${service_api_response_log.insert.entry}")
-    private String insertApiAuditLogSql;
-
-    public int addLog(ServiceApiAuditLog apiAuditLog) {
-    	log.info("call addLog {}", apiAuditLog);
-        BeanPropertySqlParameterSource params = new BeanPropertySqlParameterSource(apiAuditLog);
-        KeyHolder holder = new GeneratedKeyHolder();
-        return jdbcTemplate.update(insertApiAuditLogSql, params, holder);
-    }
+	@Transactional
+	public Long addLog(ServiceApiAuditLog apiAuditLog) {
+		log.debug("Running query addLog {}", apiAuditLog);
+		return (Long) sessionFactory.getCurrentSession().save(apiAuditLog);
+	}
 }

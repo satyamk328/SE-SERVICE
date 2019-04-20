@@ -1,7 +1,5 @@
 package com.erp.user.model;
 
-import java.sql.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,8 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
 import lombok.AllArgsConstructor;
@@ -42,7 +38,7 @@ public class User {
 	@Column(name = "Email")
 	private String email;
 	@Column(name = "PhoneNumber")
-	private Long phoneNumber;
+	private String phoneNumber;
 	@Column(name = "Address")
 	private String address;
 	@Column(name = "City")
@@ -55,18 +51,9 @@ public class User {
 	private Boolean isActive;
 	@Column(name = "IsLock")
 	private Boolean isLock;
-	@Column(name = "CreatedBy")
-	private String createdBy;
-	@Column(name = "DateCreated")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date dateCreated;
-	@Column(name = "ModifiedBy")
-	private String modifiedBy;
-	@Column(name = "DateModified")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date dateModified;
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "RoleId", nullable = false)
 	private Role role;
+	
 
 }

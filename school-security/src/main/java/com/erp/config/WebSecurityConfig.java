@@ -4,8 +4,6 @@ package com.erp.config;
  *
  */
 
-import javax.activation.DataSource;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,8 +21,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.erp.auth.CustomLogoutSuccessHandler;
 import com.erp.auth.HttpAuthenticationEntryPoint;
-import com.erp.auth.JwtAuthTokenFilter;
 import com.erp.auth.JWTLoginFilter;
+import com.erp.auth.JwtAuthTokenFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -38,9 +36,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private JWTLoginFilter jwtLogin;
-
-	@Autowired
-	DataSource dataSource;
 
 	@Autowired
 	private UserDetailsService userDetailsServiceBean;

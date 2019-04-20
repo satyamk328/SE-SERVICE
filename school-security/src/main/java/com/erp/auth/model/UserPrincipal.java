@@ -23,14 +23,14 @@ public class UserPrincipal implements UserDetails {
 	private Long userId;
 	private String firstName;
 	private String lastName;
-	private Long phone;
+	private String phone;
 	private String email;
 	@JsonIgnore
 	private String password;
 
 	private GrantedAuthority authorities;
 
-	public UserPrincipal(Long userId, String firstName, String lastName, Long phone, String email, String password,
+	public UserPrincipal(Long userId, String firstName, String lastName, String phone, String email, String password,
 			GrantedAuthority authorities) {
 		this.userId = userId;
 		this.firstName = firstName;

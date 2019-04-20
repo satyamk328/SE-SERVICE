@@ -13,11 +13,11 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 import org.springframework.stereotype.Component;
 
 import com.erp.audit.dao.UserJwtTokenDao;
-import com.erp.audit.model.JwtModel;
 import com.erp.service.ChannelService;
 import com.erp.service.TokenAuthenticationService;
 import com.erp.spring.model.RestResponse;
 import com.erp.spring.model.RestStatus;
+import com.erp.user.model.JwtModel;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;

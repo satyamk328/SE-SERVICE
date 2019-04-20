@@ -2,25 +2,15 @@ package com.erp.config;
 
 import java.util.concurrent.Executors;
 
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.core.env.Environment;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -39,12 +29,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableTransactionManagement
 @EnableScheduling
 @PropertySource({ "classpath:application.properties"})
-public class WebConfig implements WebMvcConfigurer, TransactionManagementConfigurer {
+public class WebConfig implements WebMvcConfigurer {
 
 	public static final Integer SECONDS_IN_DAY = 86400;
-
-	@Autowired
-	private Environment env;
 
 	@Bean
 	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
@@ -52,35 +39,6 @@ public class WebConfig implements WebMvcConfigurer, TransactionManagementConfigu
 		configurer.setIgnoreUnresolvablePlaceholders(true);
 		configurer.setIgnoreResourceNotFound(true);
 		return configurer;
-	}
-
-	@Bean
-	public PlatformTransactionManager txManager() {
-		return new DataSourceTransactionManager(dataSource());
-	}
-
-	@Override
-	public PlatformTransactionManager annotationDrivenTransactionManager() {
-		return txManager();
-	}
-	
-	@Bean
-	public JdbcTemplate jdbcTemplate(DataSource dataSource) {
-		return new JdbcTemplate(dataSource);
-	}
-
-	@Bean
-	public NamedParameterJdbcTemplate jdbcTemplateObject(DataSource dataSource) {
-		return new NamedParameterJdbcTemplate(dataSource);
-	}
-
-	@Bean
-	public DataSource dataSource() {
-		DataSource dataSource = DataSourceBuilder.create().driverClassName(env.getProperty("spring.user.datasource.driver-class-name"))
-				.url(env.getProperty("spring.datasource.url")).username(env.getProperty("spring.datasource.username"))
-				.password(env.getProperty("spring.datasource.password")).build();
-		
-		return dataSource;
 	}
 
 	@Bean

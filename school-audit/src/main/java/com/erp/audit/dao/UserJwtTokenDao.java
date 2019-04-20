@@ -2,13 +2,15 @@ package com.erp.audit.dao;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.erp.audit.model.JwtModel;
+import com.erp.user.model.JwtModel;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,49 +18,33 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class UserJwtTokenDao {
 
-	 /** The jdbc template object. */
-    private NamedParameterJdbcTemplate jdbcTemplateObject;
+	@Autowired
+	private SessionFactory sessionFactory;
 
-    @Value("${user_jwt_token.insert.sql}")
-    private String selectByIdSql;
+	@Transactional
+	public Long insertJwt(final JwtModel jwt) {
+		return (Long) sessionFactory.getCurrentSession().save(jwt);
+	}
 
-    @Value("${user_jwt_token.delete.sql}")
-    private String removeJwtSql;
+	@Transactional
+	public int removeJwt(final JwtModel jwt) {
+		Session session = sessionFactory.getCurrentSession();
+		return session.createQuery("Delete from JwtModel where token=:Token").setParameter("Token", jwt.getToken())
+				.executeUpdate();
+	}
 
-    @Value("${user_jwt_token.select.sql}")
-    private String checkJwtSql;
+	public boolean checkJwt(final String jwt) {
+		List<Integer> isValid = (List<Integer>) sessionFactory.getCurrentSession().createCriteria(JwtModel.class)
+				.add(Restrictions.eq("token", jwt)).add(Restrictions.gt("expirationTime", "now()"))
+				.add(Restrictions.gt("valid", "1")).setProjection(Projections.property("valid"));
+		log.info("Query run for checkJwt ");
+		if (isValid.size() == 0) {
+			return false;
+		}
+		return isValid.get(0) == 1 ? true : false;
+	}
 
-    @Value("${user_jwt_token.udpate.IsValid}")
-    private String setValid;
-
-    @Value("${user_jwt_token.select.isValid.sql}")
-    private String checkValid;
-
-    public int insertJwt(final JwtModel jwt) {
-    	log.info("Query run for insertJwt {}", selectByIdSql);
-        final BeanPropertySqlParameterSource params = new BeanPropertySqlParameterSource(jwt);
-        return jdbcTemplateObject.update(selectByIdSql, params);
-    }
-
-    public int removeJwt(final JwtModel jwt) {
-    	log.info("Query run for removeJwt {}", removeJwtSql);
-        final MapSqlParameterSource mapParam = new MapSqlParameterSource();
-        mapParam.addValue("Token", jwt.getToken());
-        return jdbcTemplateObject.update(removeJwtSql, mapParam);
-    }
-
-    public boolean checkJwt(final String jwt) {
-    	log.info("Query run for checkJwt {}", checkValid);
-        final MapSqlParameterSource mapParam = new MapSqlParameterSource();
-        mapParam.addValue("Token", jwt);
-        final List<Integer> isValid = jdbcTemplateObject.queryForList(checkValid, mapParam, Integer.class);
-        if (isValid.size() == 0) {
-            return false;
-        }
-        return isValid.get(0) == 1 ? true : false;
-    }
-
-    public int updateJwtIsValid(final JwtModel jwt) {
-        return 0;
-    }
+	public int updateJwtIsValid(final JwtModel jwt) {
+		return 0;
+	}
 }

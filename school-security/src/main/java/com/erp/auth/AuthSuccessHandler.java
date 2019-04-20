@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import com.erp.audit.service.DBLoggingHandler;
 import com.erp.auth.model.ProfileVO;
+import com.erp.auth.model.UserPrincipal;
 import com.erp.service.ChannelService;
 import com.erp.service.TokenAuthenticationService;
 import com.erp.spring.model.RestResponse;
@@ -39,9 +40,6 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
 	@Autowired
 	private DBLoggingHandler loggingHandler;
 
-	@Autowired
-	private ChannelService channelService;
-
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) throws IOException, ServletException {
@@ -55,7 +53,7 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
 
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-			User user = (User) auth.getPrincipal();
+			UserPrincipal user = (UserPrincipal) auth.getPrincipal();
 
 			List<String> userRoles = new ArrayList<>();
 			for (GrantedAuthority o : user.getAuthorities()) {

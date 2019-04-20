@@ -2,9 +2,6 @@ package com.erp.user.dao;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.erp.user.model.RolePrivilege;
@@ -15,11 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RolePrivilegeDao {
 
-	@Autowired
-	private NamedParameterJdbcTemplate jdbcTemplateObject;
-
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
 
 	public RolePrivilege getPrivilegeByRoleId(Long roleId) {
 		return null;
