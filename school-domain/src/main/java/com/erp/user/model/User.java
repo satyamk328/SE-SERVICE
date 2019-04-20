@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,47 +25,48 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "user_master")
+@Table(name = "user_master", uniqueConstraints = { @UniqueConstraint(columnNames = { "phoneNumber" }),
+		@UniqueConstraint(columnNames = { "email" }) })
 public class User {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "UserId", nullable = false, unique = true)
 	private Long userId;
-	@Column(name="FirstName")
+	@Column(name = "FirstName")
 	private String firstName;
-	@Column(name="LastName")
+	@Column(name = "LastName")
 	private String lastName;
-	@Column(name="Password")
+	@Column(name = "Password")
 	private String password;
-	@Column(name="Email")
+	@Column(name = "Email")
 	private String email;
-	@Column(name="PhoneNumber")
+	@Column(name = "PhoneNumber")
 	private Long phoneNumber;
-	@Column(name="Address")
+	@Column(name = "Address")
 	private String address;
-	@Column(name="City")
+	@Column(name = "City")
 	private String city;
-	@Column(name="State")
+	@Column(name = "State")
 	private String state;
-	@Column(name="Country")
+	@Column(name = "Country")
 	private String country;
-	@Column(name="IsActive")
+	@Column(name = "IsActive")
 	private Boolean isActive;
-	@Column(name="IsLock")
+	@Column(name = "IsLock")
 	private Boolean isLock;
-	@Column(name="CreatedBy")
+	@Column(name = "CreatedBy")
 	private String createdBy;
-	@Column(name="DateCreated")
+	@Column(name = "DateCreated")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateCreated;
-	@Column(name="ModifiedBy")
+	@Column(name = "ModifiedBy")
 	private String modifiedBy;
-	@Column(name="DateModified")
+	@Column(name = "DateModified")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateModified;
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "RoleId",nullable = false)
+	@JoinColumn(name = "RoleId", nullable = false)
 	private Role role;
 
 }

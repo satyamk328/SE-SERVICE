@@ -18,10 +18,11 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 import org.springframework.stereotype.Component;
 
 import com.erp.audit.service.DBLoggingHandler;
+import com.erp.auth.model.ProfileVO;
+import com.erp.service.ChannelService;
 import com.erp.service.TokenAuthenticationService;
 import com.erp.spring.model.RestResponse;
 import com.erp.spring.model.RestStatus;
-import com.erp.user.model.ProfileVO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
@@ -31,35 +32,39 @@ import lombok.extern.slf4j.Slf4j;
 public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
 	public static final ObjectMapper mapper = new ObjectMapper();
-	
+
 	@Autowired
 	private TokenAuthenticationService authenticationService;
-	
+
 	@Autowired
 	private DBLoggingHandler loggingHandler;
-	
+
+	@Autowired
+	private ChannelService channelService;
+
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) throws IOException, ServletException {
-
+		// We do not need to do anything extra on REST authentication success, because
+		// there is no page to redirect to
+		response.setStatus(HttpServletResponse.SC_OK);
+		response.setHeader("Content-Type", "application/json");
+		response.setHeader("Access-Control-Expose-Headers", "Authentication");
 		try {
 			String jwt = authenticationService.addAuthentication(response, authentication.getName(), request);
 
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
 			User user = (User) auth.getPrincipal();
-			
+
 			List<String> userRoles = new ArrayList<>();
 			for (GrantedAuthority o : user.getAuthorities()) {
 				userRoles.add(o.getAuthority());
 			}
 
-			response.setStatus(HttpServletResponse.SC_OK);
-			response.setHeader("Content-Type", "application/json");
-
 			ProfileVO profile = new ProfileVO();
-			
-			//profile.setUserContext(user);
+
+			// profile.setUserContext(user);
 			profile.setStatus("SUCCESS");
 			profile.setType(user.getAuthorities().toArray()[0].toString());
 
@@ -69,11 +74,11 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
 			profile.setExpiresIn(TokenAuthenticationService.getExpirationTime());
 			profile.setTokenType(jwt.split(" ")[0]);
 
-			RestResponse<ProfileVO> responseObj = new RestResponse<ProfileVO>(profile,
+			final RestResponse<ProfileVO> responseObj = new RestResponse<>(profile,
 					new RestStatus<>("200", "Login Success"));
-			String result = mapper.writeValueAsString(profile);
+			final String result = mapper.writeValueAsString(responseObj);
 			log.info("Login Response : " + result);
-			writer.write(mapper.writeValueAsString(responseObj));
+			writer.write(result);
 			writer.flush();
 
 		} catch (Exception e) {

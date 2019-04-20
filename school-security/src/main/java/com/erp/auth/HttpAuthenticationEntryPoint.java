@@ -23,7 +23,10 @@ public class HttpAuthenticationEntryPoint implements AuthenticationEntryPoint {
 	@Override
 	public void commence(final HttpServletRequest request, final HttpServletResponse response,
 			final AuthenticationException authException) throws IOException {
-
+		// This is invoked when user tries to access a secured REST resource without
+		// supplying any credentials
+		// We should just send a 401 Unauthorized response because there is no 'login
+		// page' to redirect to
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 		final PrintWriter writer = response.getWriter();
 		RestStatus<?> status = new RestStatus<>(HttpStatus.UNAUTHORIZED.toString(),

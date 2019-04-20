@@ -19,5 +19,7 @@ public class GlobalConstants {
 	
 	public static final String HTML_CONTENT = "";
 	public static final String REQUEST_HEADER_SERVICE_NAME = "X-SERVICE-NAME";
+	public static final String PRINCIAPL_NOT_FOUND_EXCEPTION_MESSAGE= "principal.not.found.exception";
+	public static final String CHANNEL_TYPE="ChannelType";
 
 }

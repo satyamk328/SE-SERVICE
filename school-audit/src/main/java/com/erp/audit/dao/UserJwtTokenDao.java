@@ -59,12 +59,6 @@ public class UserJwtTokenDao {
     }
 
     public int updateJwtIsValid(final JwtModel jwt) {
-    	log.info("Query run for updateJwtIsValid {}", setValid);
-        final MapSqlParameterSource mapParam = new MapSqlParameterSource();
-        mapParam.addValue("Token", jwt.getToken());
-        mapParam.addValue("Valid", jwt.isValid());
-        mapParam.addValue("channelName", jwt.getChannelName());
-        mapParam.addValue("channelType", jwt.getChannelType());
-        return jdbcTemplateObject.update(setValid, mapParam);
+        return 0;
     }
 }

@@ -6,16 +6,18 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import com.erp.audit.dao.UserJwtTokenDao;
 import com.erp.audit.model.JwtModel;
 import com.erp.auth.SessionTracker;
+import com.erp.auth.model.UserPrincipal;
+import com.erp.user.service.UserService;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -41,13 +43,20 @@ public class TokenAuthenticationService {
 
 	@Autowired
 	private SessionTracker sessionTracker;
-
+	@Autowired
+	private UserService userService;
 	@Autowired
 	private UserJwtTokenDao jwtDao;
 
 	public String addAuthentication(final HttpServletResponse res, final String username,
 			final HttpServletRequest req) {
-		Long userId = null;// consumerDao.getIdByName(username);
+		
+		Long userId = userService.getIdByName(username).getUserId();
+		final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		final UserPrincipal userDetails = (UserPrincipal) authentication.getPrincipal();
+		if (userId == null) {
+			userId = userDetails.getUserId();
+		}
 
 		final String sessionId = req.getSession().getId();
 		log.debug("Session Id getting saved is:{} ", sessionId);
@@ -59,13 +68,15 @@ public class TokenAuthenticationService {
 				.signWith(SignatureAlgorithm.HS512, SECRET).compact();
 		sessionTracker.map.put(sessionId, req.getSession());
 
+		// This is temporary fix to check the datapower flow
+		res.addHeader(AUTHORIZATION_HEADER, BEARER_TOKEN_PREFIX + " dp-jwt-token");
+
 		final JwtModel jwtModel = new JwtModel();
 		jwtModel.setToken(BEARER_TOKEN_PREFIX + " " + JWT);
 		jwtModel.setIssueTime(new Date());
-		jwtModel.setConsumerId(userId);
+		jwtModel.setUserId(userId);
 		jwtModel.setExpirationTime(new Date(jwtModel.getIssueTime().getTime() + (expirationTime * 60 * 1000)));
 		jwtModel.setValid(true);
-
 		jwtDao.insertJwt(jwtModel);
 
 		return BEARER_TOKEN_PREFIX + " " + JWT;
@@ -73,7 +84,6 @@ public class TokenAuthenticationService {
 
 	public Authentication getAuthentication(final HttpServletRequest request) {
 		String token = request.getHeader(AUTHORIZATION_HEADER);
-
 		if (token != null && token.contains(BEARER_TOKEN_PREFIX)) {
 			token = getAuthenticationToken(token);
 			// parse the token.
@@ -81,6 +91,7 @@ public class TokenAuthenticationService {
 			try {
 				claims = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token.replace(BEARER_TOKEN_PREFIX, ""))
 						.getBody();
+
 			} catch (final ExpiredJwtException e) {
 				log.info(JWT_TOKEN_EXPIRED, e);
 				return null;
@@ -100,67 +111,48 @@ public class TokenAuthenticationService {
 			final String user = claims.getSubject();
 			final String sessionId = claims.getId();
 
-			log.debug("Getting Authenticate for SessionId = {}", sessionId);
+			log.debug("Getting Authenticate for sessionId = {}", sessionId);
 			sessionTracker.map.forEach((key, value) -> {
 				log.debug("Key : {}, Value : {}", key, value);
 			});
-			final HttpSession session = sessionTracker.map.get(sessionId);
-
-			log.debug("Getting Authenticate for the Session ={} ", session);
 			return user != null ? new UsernamePasswordAuthenticationToken(user, null, emptyList()) : null;
+
 		}
 
 		return null;
 	}
 
-	public String getAuthenticationToken(String token) {
-		final String[] tokenArray = token.split(",");
-		if (tokenArray.length > 1) {
-			// In case of Data Power the second token will belong to ssc.
-			token = tokenArray[1];
-			if (!token.contains(BEARER_TOKEN_PREFIX)) {
-				token = BEARER_TOKEN_PREFIX + " " + token;
-			}
-		}
-		return token;
+	public String getSessionId(final HttpServletRequest request) {
+		final String token = request.getHeader(AUTHORIZATION_HEADER);
+		return Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token.replace(BEARER_TOKEN_PREFIX, "")).getBody()
+				.getId();
 	}
-	
+
 	public String getUserName(final HttpServletRequest req) {
-        String user = null;
-        final String token = req.getHeader(AUTHORIZATION_HEADER);
-        if (token != null && token.contains(BEARER_TOKEN_PREFIX)) {
-            try {
-                user = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token.replace(BEARER_TOKEN_PREFIX, ""))
-                        .getBody().getSubject();
-            } catch (final Exception e) {
-                log.debug("Error parsing Jwt Token", e);
-            }
-        }
-
-        return user;
-
-    }
-
-
-	public Long getUserId(final HttpServletRequest req) {
-		String userId = null;
+		String user = null;
 		final String token = req.getHeader(AUTHORIZATION_HEADER);
 		if (token != null && token.contains(BEARER_TOKEN_PREFIX)) {
 			try {
-				userId = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token.replace(BEARER_TOKEN_PREFIX, ""))
-						.getBody().getId();
+				user = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token.replace(BEARER_TOKEN_PREFIX, ""))
+						.getBody().getSubject();
 			} catch (final Exception e) {
 				log.debug("Error parsing Jwt Token", e);
 			}
 		}
-
-		if (userId == null) {
-			return null;
-		} else {
-			return Long.parseLong(userId);
-		}
+		return user;
 	}
 
+	public String getAuthenticationToken(String token) {
+        final String[] tokenArray = token.split(",");
+        if (tokenArray.length > 1) {
+            // In case of Data Power the second token will belong to ssc.
+            token = tokenArray[1];
+            if (!token.contains(BEARER_TOKEN_PREFIX)) {
+                token = BEARER_TOKEN_PREFIX + " " + token;
+            }
+        }
+        return token;
+    }
 	public static long getExpirationTime() {
 		return expirationTime;
 	}
