@@ -25,26 +25,28 @@ public class UserPrincipal implements UserDetails {
 	private String lastName;
 	private String phone;
 	private String email;
+	private boolean isActive;
 	@JsonIgnore
 	private String password;
 
 	private GrantedAuthority authorities;
 
 	public UserPrincipal(Long userId, String firstName, String lastName, String phone, String email, String password,
-			GrantedAuthority authorities) {
+			boolean isActive, GrantedAuthority authorities) {
 		this.userId = userId;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.phone = phone;
 		this.email = email;
 		this.password = password;
+		this.isActive = isActive;
 		this.authorities = authorities;
 	}
 
 	public static UserPrincipal build(User user) {
 		GrantedAuthority authorities = new SimpleGrantedAuthority(user.getRole().getRoleName());
 		return new UserPrincipal(user.getUserId(), user.getFirstName(), user.getLastName(), user.getPhoneNumber(),
-				user.getEmail(), user.getPassword(), authorities);
+				user.getEmail(), user.getPassword(), user.getIsActive(), authorities);
 	}
 
 	@Override
@@ -81,7 +83,7 @@ public class UserPrincipal implements UserDetails {
 
 	@Override
 	public boolean isEnabled() {
-		return true;
+		return isActive;
 	}
 
 	@Override

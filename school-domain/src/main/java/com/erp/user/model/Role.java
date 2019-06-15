@@ -36,7 +36,7 @@ public class Role {
 	private Boolean isActive;
 	@Column(name="IsAdmin")
 	private Boolean isAdmin;
-	@OneToMany(cascade = CascadeType.ALL, mappedBy="role")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy="roles")
     private List<User> users;
 	
 }
